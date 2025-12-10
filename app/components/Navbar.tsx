@@ -14,6 +14,10 @@ export default function NavBar() {
         {/* LOGO */}
         <Link
           href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "auto" });
+          }}
           className="text-xl font-bold text-[#1B3C53] tracking-tight"
         >
           Synario
@@ -29,19 +33,35 @@ export default function NavBar() {
 
         {/* DESKTOP NAV */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1B3C53]">
-          <Link href="/models" className="hover:text-[#3BAFDA] transition">
-            Models
-          </Link>
-          <Link href="/pricing" className="hover:text-[#3BAFDA] transition">
+          <a href="#library" className="hover:text-[#3BAFDA] transition">
+            Library
+          </a>
+          <a href="#pipeline" className="hover:text-[#3BAFDA] transition">
+            Pipeline
+          </a>
+          <a href="#pricing" className="hover:text-[#3BAFDA] transition">
             Pricing
-          </Link>
-          <Link href="/about" className="hover:text-[#3BAFDA] transition">
+          </a>
+          <a href="#about" className="hover:text-[#3BAFDA] transition">
             About
-          </Link>
+          </a>
+          <a href="#contact" className="hover:text-[#3BAFDA] transition">
+            Contact
+          </a>
         </div>
 
         {/* DESKTOP CTA */}
         <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/login"
+            className="
+              px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm
+              hover:bg-gray-100 transition
+            "
+          >
+            Log In
+          </Link>
+
           <Link
             href="/signup"
             className="
@@ -57,20 +77,37 @@ export default function NavBar() {
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden px-4 pb-4 space-y-3 text-sm font-medium text-[#1B3C53] bg-white border-b border-gray-200">
-          <Link href="/models" className="block hover:text-[#3BAFDA]">
-            Models
-          </Link>
-          <Link href="/pricing" className="block hover:text-[#3BAFDA]">
+
+          <a href="#library" className="block hover:text-[#3BAFDA]">
+            Library
+          </a>
+          <a href="#pipeline" className="block hover:text-[#3BAFDA]">
+            Pipeline
+          </a>
+          <a href="#pricing" className="block hover:text-[#3BAFDA]">
             Pricing
-          </Link>
-          <Link href="/about" className="block hover:text-[#3BAFDA]">
+          </a>
+          <a href="#about" className="block hover:text-[#3BAFDA]">
             About
+          </a>
+          <a href="#contact" className="block hover:text-[#3BAFDA]">
+            Contact
+          </a>
+
+          <Link
+            href="/login"
+            className="
+              block mt-2 px-4 py-2 rounded-lg
+              text-[#1B3C53] font-semibold hover:bg-gray-100 transition
+            "
+          >
+            Log In
           </Link>
 
           <Link
             href="/signup"
             className="
-              inline-block px-4 py-2 rounded-lg mt-2
+              block px-4 py-2 rounded-lg mt-1
               bg-[#3BAFDA] text-[#1B3C53] font-semibold
               hover:bg-[#3BAFDA]/90 transition
             "

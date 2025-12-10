@@ -80,49 +80,50 @@ export default function ModelsPipeline({
   const paginated = sorted.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <section className="w-full bg-[#F2F4F7] py-20 px-6 text-[#1B3C53]">
-      <div className="max-w-6xl mx-auto">
+  <section className="relative z-10 w-full bg-[#F2F4F7]/85 py-20 px-6 text-[#1B3C53]">
+        <div className="max-w-6xl mx-auto">
+          
+          {/* HEADER */}
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-3xl font-bold">Model Pipeline</h3>
 
-        {/* HEADER */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-3xl font-bold">Model Pipeline</h3>
+            <button
+              onClick={openModal}
+              className="
+                flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+                bg-[#3BAFDA] text-white hover:bg-[#3BAFDA]/90 transition shadow-sm
+              "
+            >
+              <PlusCircle size={18} />
+              Submit an Idea
+            </button>
+          </div>
 
-          <button
-            onClick={openModal}
-            className="
-              flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
-              bg-[#3BAFDA] text-white hover:bg-[#3BAFDA]/90 transition shadow-sm
-            "
-          >
-            <PlusCircle size={18} />
-            Submit an Idea
-          </button>
-        </div>
+          {/* DESCRIPTION */}
+          <p className="text-[#456882] text-sm mb-10 max-w-2xl leading-relaxed">
+            A leaderboard of models requested by founders. Upvote the ideas you want built next.
+          </p>
 
-        {/* DESCRIPTION */}
-        <p className="text-[#456882] text-sm mb-10 max-w-2xl leading-relaxed">
-          A leaderboard of models requested by founders. Upvote the ideas you want built next.
-        </p>
-
-        {/* TABLE */}
-        <PipelineTable
-          items={paginated}
-          fullList={sorted}
-          vote={vote}
-          page={page}
-          pageSize={pageSize}
-        />
-
-        {/* PAGINATION */}
-        <div className="flex justify-center mt-8">
-          <PaginationControls
+          {/* TABLE */}
+          <PipelineTable
+            items={paginated}
+            fullList={sorted}
+            vote={vote}
             page={page}
-            totalPages={Math.ceil(items.length / pageSize)}
-            setPage={setPage}
+            pageSize={pageSize}
           />
-        </div>
 
-      </div>
-    </section>
+          {/* PAGINATION */}
+          <div className="flex justify-center mt-8">
+            <PaginationControls
+              page={page}
+              totalPages={Math.ceil(items.length / pageSize)}
+              setPage={setPage}
+            />
+          </div>
+
+        </div>
+      </section>
+
   );
 }

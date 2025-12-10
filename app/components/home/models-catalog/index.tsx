@@ -100,34 +100,40 @@ export default function ModelsCatalog() {
   // RENDER
   // ---------------------------------------------------
 
-  return (
-    <section className="w-full max-w-6xl mx-auto py-20 px-6 bg-white text-[#1B3C53]">
+return (
+  <section
+    className="
+      relative 
+      z-10 
+      w-full max-w-6xl mx-auto 
+      py-20 px-6 
+      bg-white 
+      text-[#1B3C53]
+    "
+  >
+    <CatalogHeader
+      query={query}
+      setQuery={setQuery}
+      view={view}
+      setView={setView}
+      category={category}
+      setCategory={setCategory}
+      sort={sort}
+      setSort={setSort}
+    />
 
-      {/* HEADER + FILTER BAR */}
-      <CatalogHeader
-        query={query}
-        setQuery={setQuery}
-        view={view}
-        setView={setView}
-        category={category}
-        setCategory={setCategory}
-        sort={sort}
-        setSort={setSort}
-      />
+    {view === "grid" ? (
+      <ModelGrid models={filtered} />
+    ) : (
+      <ModelTable models={filtered} />
+    )}
 
-      {/* GRID OR TABLE */}
-      {view === "grid" ? (
-        <ModelGrid models={filtered} />
-      ) : (
-        <ModelTable models={filtered} />
-      )}
+    {filtered.length === 0 && (
+      <p className="text-center text-[#456882] mt-8">
+        No models match your search.
+      </p>
+    )}
+  </section>
+);
 
-      {/* EMPTY STATE */}
-      {filtered.length === 0 && (
-        <p className="text-center text-[#456882] mt-8">
-          No models match your search.
-        </p>
-      )}
-    </section>
-  );
 }

@@ -104,7 +104,7 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className="relative z-10 w-full flex justify-center py-12">
+      <div className="relative z-10 w-full min-h-screen flex justify-center items-center">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
@@ -133,7 +133,7 @@ export default function Home() {
               </Link>
 
               <Link
-                href="/"
+                href="/#library"
                 className="
                   px-6 py-3 rounded-full text-lg 
                   border border-[#456882] text-[#E3E3E3] 

@@ -7,6 +7,8 @@ import Hero from "./components/home/hero";
 import ModelsCatalog from "./components/home/models-catalog";
 import ModelsPipeline from "./components/home/models-pipeline";
 import Pricing from "./components/home/pricing";
+import About from "./components/home/about";
+import Contact from "./components/home/contact";
 
 import Modal from "./components/ui/Modal";
 import SubmitIdeaForm from "./components/home/models-pipeline/SubmitIdeaForm";
@@ -17,9 +19,6 @@ export default function HomePage() {
     null | ((title: string, description: string) => void)
   >(null);
 
-  console.log("Modal state:", showIdeaModal);
-
-  // Prevent infinite loops by stabilizing this function
   const handleRegisterSubmit = useCallback(
     (fn: (title: string, description: string) => void) => {
       setSubmitIdea(() => fn);
@@ -29,7 +28,6 @@ export default function HomePage() {
 
   return (
     <>
-      {/* MODAL LIVES AT TOP LEVEL — THIS IS REQUIRED */}
       <Modal open={showIdeaModal} onClose={() => setShowIdeaModal(false)}>
         {submitIdea ? (
           <SubmitIdeaForm
@@ -45,16 +43,11 @@ export default function HomePage() {
       </Modal>
 
       {/* PAGE CONTENT */}
-      <div
-        className="
-          relative z-0
-          w-full min-h-screen 
-          bg-[#1B3C53] text-white 
-          flex flex-col items-center 
-        "
-      >
-        {/* HERO — NO TRANSLATE-Y */}
+      <div className="relative z-0 w-full min-h-screen bg-[#1B3C53] text-white flex flex-col items-center">
+        
+        {/* HERO */}
         <motion.div
+          id="/#home"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -63,11 +56,12 @@ export default function HomePage() {
           <Hero />
         </motion.div>
 
-        {/* WHITE SECTION */}
+        {/* WHITE SECTIONS */}
         <div className="w-full text-[#1B3C53]">
 
-          {/* MODEL CATALOG */}
+          {/* MODEL CATALOG — #library */}
           <motion.div
+            id="library"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -76,8 +70,9 @@ export default function HomePage() {
             <ModelsCatalog />
           </motion.div>
 
-          {/* MODEL PIPELINE */}
+          {/* MODEL PIPELINE — #pipeline */}
           <motion.div
+            id="pipeline"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -89,8 +84,9 @@ export default function HomePage() {
             />
           </motion.div>
 
-          {/* PRICING */}
+          {/* PRICING — #pricing */}
           <motion.div
+            id="pricing"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7 }}
@@ -98,6 +94,28 @@ export default function HomePage() {
           >
             <Pricing />
           </motion.div>
+
+          {/* ABOUT — #about */}
+          <motion.div
+            id="about"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+            className="w-full mt-12 mb-0"
+          >
+            <About />
+          </motion.div>              
+          
+          {/* CONTACT — #contact */}
+          <motion.div
+            id="contact"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+            className="w-full mt-12 mb-0"
+          >
+            <Contact />
+          </motion.div>          
 
         </div>
       </div>
