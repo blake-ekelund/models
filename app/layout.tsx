@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import NavBar from "@/app/components/Navbar";
+import NavbarGate from "@/app/components/NavbarGate";
 
 export const metadata: Metadata = {
   title: "A Financial Modeling Engine",
@@ -16,11 +16,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="relative min-h-screen">
 
-        {/* GLOBAL NAVBAR */}
-        <NavBar />
+        {/* CONDITIONAL NAVBAR */}
+        <NavbarGate />
 
-        {/* PAGE CONTENT (pushed down so navbar doesn’t cover hero) */}
-        <div className="py-12">
+        {/* PAGE CONTENT */}
+        <div className="py-0">
           {children}
         </div>
 
