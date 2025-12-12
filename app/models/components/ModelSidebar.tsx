@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { ChevronRight, LogOut } from "lucide-react";
 import { useModelContext } from "@/app/models/context/ModelContext";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function ModelSidebar() {
   const pathname = usePathname();
@@ -15,39 +16,35 @@ export default function ModelSidebar() {
   const isSaved = pathname.startsWith("/models/saved");
   const inWorkspace = !isCatalog && !isSaved;
 
-  // Expand child nav when in workspace
   const [expanded, setExpanded] = useState(inWorkspace);
 
   useEffect(() => {
     if (inWorkspace) setExpanded(true);
   }, [inWorkspace]);
 
-  // TEMP: recent models (active model only for now)
   const recentModels = activeModel
-    ? [
-        {
-          ...activeModel,
-          lastEdited: "Today", // stub → wire later
-        },
-      ]
+    ? [{ ...activeModel, lastEdited: "Today" }]
     : [];
 
+  // ---------------------------------------------------
+  // CORRECT SIGN OUT (client + server)
+  // ---------------------------------------------------
   async function signOut() {
-    await fetch("/auth/sign-out", {
-      method: "POST",
-    });
+    // 1. Clear client-side Supabase session
+    await supabase.auth.signOut();
 
-    // Force full reset so cookies + state are cleared
-    window.location.href = "/auth/sign-in";
+    // 2. Clear server-side cookies
+    await fetch("/auth/sign-out", { method: "POST" });
+
+    // 3. Hard redirect to HOME
+    window.location.replace("/?loggedOut=true");
   }
 
   return (
     <div className="flex h-full flex-col bg-[#1E4258] text-[#E3E3E3]">
       {/* BRAND */}
       <div className="px-4 py-4">
-        <div className="text-sm font-semibold tracking-wide">
-          synario
-        </div>
+        <div className="text-sm font-semibold tracking-wide">synario</div>
         <div className="text-[11px] text-[#E3E3E3]/60">
           Financial Modeling Engine
         </div>
@@ -94,9 +91,8 @@ export default function ModelSidebar() {
 
             {recentModels.map((model, idx) => (
               <div key={model.id} className="mb-2">
-                {/* MODEL ANCHOR */}
                 <button
-                  onClick={() => idx === 0 && setExpanded((v) => !v)}
+                  onClick={() => idx === 0 && setExpanded(v => !v)}
                   className="w-full text-left rounded-lg bg-[#234F69]
                              border border-[#456882]/60 px-3 py-2
                              hover:bg-[#2A5672] transition"
@@ -111,12 +107,11 @@ export default function ModelSidebar() {
                       </div>
                     </div>
 
-                    {/* CARET ONLY FOR ACTIVE MODEL */}
                     {idx === 0 && (
                       <ChevronRight
                         size={16}
                         className={clsx(
-                          "text-[#E3E3E3]/60 transition-transform duration-200",
+                          "text-[#E3E3E3]/60 transition-transform",
                           expanded && "rotate-90"
                         )}
                       />
@@ -124,7 +119,6 @@ export default function ModelSidebar() {
                   </div>
                 </button>
 
-                {/* CHILD NAV (ACTIVE MODEL ONLY) */}
                 {idx === 0 && expanded && (
                   <nav className="mt-2 space-y-1">
                     {[
@@ -132,7 +126,7 @@ export default function ModelSidebar() {
                       { label: "Acquisition", href: `/models/${model.id}/acquisition` },
                       { label: "Revenue", href: `/models/${model.id}/revenue` },
                       { label: "Retention", href: `/models/${model.id}/retention` },
-                    ].map((item) => {
+                    ].map(item => {
                       const active = pathname === item.href;
 
                       return (
@@ -161,7 +155,7 @@ export default function ModelSidebar() {
         </>
       )}
 
-      {/* SIGN OUT — SEPARATED SECTION */}
+      {/* SIGN OUT */}
       <div className="mt-auto border-t border-[#456882]/60 p-3">
         <button
           onClick={signOut}

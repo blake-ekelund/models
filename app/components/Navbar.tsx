@@ -10,23 +10,43 @@ export default function NavBar() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   // ---------------------------------------------------
-  // CHECK AUTH STATE (client-side only)
+  // KEEP AUTH STATE IN SYNC (important)
   // ---------------------------------------------------
   useEffect(() => {
+    // Initial check
     supabase.auth.getSession().then(({ data }) => {
       setSignedIn(!!data.session);
     });
+
+    // Subscribe to auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(!!session);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
+  // ---------------------------------------------------
+  // PROPER SIGN OUT (client + server)
+  // ---------------------------------------------------
   async function signOut() {
+    // 1. Clear client-side Supabase session (memory)
+    await supabase.auth.signOut();
+
+    // 2. Clear server-side cookies
     await fetch("/auth/sign-out", { method: "POST" });
-    window.location.href = "/";
+
+    // 3. Hard redirect to reset app state
+    window.location.replace("/auth/sign-in?loggedOut=true");
   }
 
   return (
     <header className="fixed top-0 left-0 w-full z-[9998] bg-white border-b border-gray-200 shadow-sm">
       <nav className="max-w-6xl mx-auto px-0 py-4 flex items-center justify-between">
-
         {/* LOGO */}
         <Link
           href="/"
@@ -72,20 +92,14 @@ export default function NavBar() {
             <>
               <Link
                 href="/auth/sign-in"
-                className="
-                  px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm
-                  hover:bg-gray-100 transition
-                "
+                className="px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm hover:bg-gray-100 transition"
               >
                 Log In
               </Link>
 
               <Link
                 href="/auth/sign-up"
-                className="
-                  px-4 py-2 rounded-lg bg-[#3BAFDA] text-[#1B3C53]
-                  font-semibold text-sm hover:bg-[#3BAFDA]/90 transition
-                "
+                className="px-4 py-2 rounded-lg bg-[#3BAFDA] text-[#1B3C53] font-semibold text-sm hover:bg-[#3BAFDA]/90 transition"
               >
                 Sign Up
               </Link>
@@ -95,11 +109,7 @@ export default function NavBar() {
           {signedIn === true && (
             <button
               onClick={signOut}
-              className="
-                flex items-center gap-2 px-4 py-2 rounded-lg
-                text-[#1B3C53] font-semibold text-sm
-                hover:bg-gray-100 transition
-              "
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm hover:bg-gray-100 transition"
             >
               <LogOut size={16} />
               Log Out
@@ -111,7 +121,6 @@ export default function NavBar() {
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden px-4 pb-4 space-y-3 text-sm font-medium text-[#1B3C53] bg-white border-b border-gray-200">
-
           <a href="#library" className="block hover:text-[#3BAFDA]">
             Library
           </a>
@@ -132,21 +141,14 @@ export default function NavBar() {
             <>
               <Link
                 href="/auth/sign-in"
-                className="
-                  block mt-2 px-4 py-2 rounded-lg
-                  text-[#1B3C53] font-semibold hover:bg-gray-100 transition
-                "
+                className="block mt-2 px-4 py-2 rounded-lg text-[#1B3C53] font-semibold hover:bg-gray-100 transition"
               >
                 Log In
               </Link>
 
               <Link
                 href="/auth/sign-up"
-                className="
-                  block px-4 py-2 rounded-lg mt-1
-                  bg-[#3BAFDA] text-[#1B3C53] font-semibold
-                  hover:bg-[#3BAFDA]/90 transition
-                "
+                className="block px-4 py-2 rounded-lg mt-1 bg-[#3BAFDA] text-[#1B3C53] font-semibold hover:bg-[#3BAFDA]/90 transition"
               >
                 Sign Up
               </Link>
@@ -156,10 +158,7 @@ export default function NavBar() {
           {signedIn === true && (
             <button
               onClick={signOut}
-              className="
-                flex items-center gap-2 mt-2 px-4 py-2 rounded-lg
-                text-[#1B3C53] font-semibold hover:bg-gray-100 transition
-              "
+              className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg text-[#1B3C53] font-semibold hover:bg-gray-100 transition"
             >
               <LogOut size={16} />
               Log Out
@@ -170,3 +169,4 @@ export default function NavBar() {
     </header>
   );
 }
+
