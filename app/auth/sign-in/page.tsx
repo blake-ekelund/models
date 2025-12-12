@@ -7,9 +7,11 @@ import AuthCard from "../components/AuthCard";
 
 export default function SignInPage() {
   const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const inputClass =
     "w-full rounded-lg border border-gray-300 px-4 py-2 text-sm " +
@@ -18,30 +20,37 @@ export default function SignInPage() {
 
   const primaryButton =
     "w-full rounded-lg bg-[#00338d] py-2.5 text-white font-medium " +
-    "hover:bg-[#002a73] transition";
+    "hover:bg-[#002a73] transition disabled:opacity-60";
 
   async function signIn() {
     setError(null);
+    setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
+    setLoading(false);
+
     if (error) {
       setError(error.message);
     } else {
-      router.push("/models/catalog");
+      // session is now guaranteed to exist
+      router.replace("/models/catalog");
     }
   }
 
   async function signInWithOAuth(provider: "google" | "github") {
+    setLoading(true);
+
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${location.origin}/auth/callback`,
       },
     });
+    // redirect handled by Supabase
   }
 
   return (
@@ -58,6 +67,7 @@ export default function SignInPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
+            disabled={loading}
           />
         </div>
 
@@ -69,6 +79,7 @@ export default function SignInPage() {
             className={inputClass}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
           />
         </div>
 
@@ -88,8 +99,12 @@ export default function SignInPage() {
         )}
 
         {/* PRIMARY BUTTON */}
-        <button onClick={signIn} className={primaryButton}>
-          Log In
+        <button
+          onClick={signIn}
+          className={primaryButton}
+          disabled={loading}
+        >
+          {loading ? "Signing in…" : "Log In"}
         </button>
 
         {/* OAUTH DIVIDER */}
@@ -104,8 +119,9 @@ export default function SignInPage() {
         {/* OAUTH BUTTONS */}
         <button
           onClick={() => signInWithOAuth("google")}
+          disabled={loading}
           className="w-full rounded-lg border border-gray-300 py-2.5 text-sm
-                     hover:bg-gray-50 transition"
+                     hover:bg-gray-50 transition disabled:opacity-60"
         >
           Continue with Google
         </button>

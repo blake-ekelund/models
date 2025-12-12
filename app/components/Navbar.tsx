@@ -1,11 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, LogOut } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function NavBar() {
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+
+  // ---------------------------------------------------
+  // CHECK AUTH STATE (client-side only)
+  // ---------------------------------------------------
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSignedIn(!!data.session);
+    });
+  }, []);
+
+  async function signOut() {
+    await fetch("/auth/sign-out", { method: "POST" });
+    window.location.href = "/";
+  }
 
   return (
     <header className="fixed top-0 left-0 w-full z-[9998] bg-white border-b border-gray-200 shadow-sm">
@@ -52,25 +68,43 @@ export default function NavBar() {
 
         {/* DESKTOP CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/login"
-            className="
-              px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm
-              hover:bg-gray-100 transition
-            "
-          >
-            Log In
-          </Link>
+          {signedIn === false && (
+            <>
+              <Link
+                href="/auth/sign-in"
+                className="
+                  px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm
+                  hover:bg-gray-100 transition
+                "
+              >
+                Log In
+              </Link>
 
-          <Link
-            href="/signup"
-            className="
-              px-4 py-2 rounded-lg bg-[#3BAFDA] text-[#1B3C53]
-              font-semibold text-sm hover:bg-[#3BAFDA]/90 transition
-            "
-          >
-            Sign Up
-          </Link>
+              <Link
+                href="/auth/sign-up"
+                className="
+                  px-4 py-2 rounded-lg bg-[#3BAFDA] text-[#1B3C53]
+                  font-semibold text-sm hover:bg-[#3BAFDA]/90 transition
+                "
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+
+          {signedIn === true && (
+            <button
+              onClick={signOut}
+              className="
+                flex items-center gap-2 px-4 py-2 rounded-lg
+                text-[#1B3C53] font-semibold text-sm
+                hover:bg-gray-100 transition
+              "
+            >
+              <LogOut size={16} />
+              Log Out
+            </button>
+          )}
         </div>
       </nav>
 
@@ -94,26 +128,43 @@ export default function NavBar() {
             Contact
           </a>
 
-          <Link
-            href="/login"
-            className="
-              block mt-2 px-4 py-2 rounded-lg
-              text-[#1B3C53] font-semibold hover:bg-gray-100 transition
-            "
-          >
-            Log In
-          </Link>
+          {signedIn === false && (
+            <>
+              <Link
+                href="/auth/sign-in"
+                className="
+                  block mt-2 px-4 py-2 rounded-lg
+                  text-[#1B3C53] font-semibold hover:bg-gray-100 transition
+                "
+              >
+                Log In
+              </Link>
 
-          <Link
-            href="/signup"
-            className="
-              block px-4 py-2 rounded-lg mt-1
-              bg-[#3BAFDA] text-[#1B3C53] font-semibold
-              hover:bg-[#3BAFDA]/90 transition
-            "
-          >
-            Sign Up
-          </Link>
+              <Link
+                href="/auth/sign-up"
+                className="
+                  block px-4 py-2 rounded-lg mt-1
+                  bg-[#3BAFDA] text-[#1B3C53] font-semibold
+                  hover:bg-[#3BAFDA]/90 transition
+                "
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+
+          {signedIn === true && (
+            <button
+              onClick={signOut}
+              className="
+                flex items-center gap-2 mt-2 px-4 py-2 rounded-lg
+                text-[#1B3C53] font-semibold hover:bg-gray-100 transition
+              "
+            >
+              <LogOut size={16} />
+              Log Out
+            </button>
+          )}
         </div>
       )}
     </header>

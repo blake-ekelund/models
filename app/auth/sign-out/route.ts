@@ -2,15 +2,11 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const code = url.searchParams.get("code");
-
-  const res = NextResponse.redirect(new URL("/models/catalog", req.url));
-
-  if (!code) {
-    return res;
-  }
+export async function POST(req: NextRequest) {
+  // 👇 IMPORTANT: preserve explicit logout intent
+  const res = NextResponse.redirect(
+    new URL("/auth/sign-in?loggedOut=true", req.url)
+  );
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,7 +25,7 @@ export async function GET(req: NextRequest) {
     }
   );
 
-  await supabase.auth.exchangeCodeForSession(code);
+  await supabase.auth.signOut();
 
   return res;
 }

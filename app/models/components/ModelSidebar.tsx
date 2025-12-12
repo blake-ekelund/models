@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, LogOut } from "lucide-react";
 import { useModelContext } from "@/app/models/context/ModelContext";
 
 export default function ModelSidebar() {
@@ -22,9 +22,7 @@ export default function ModelSidebar() {
     if (inWorkspace) setExpanded(true);
   }, [inWorkspace]);
 
-  // ---------------------------------------------
   // TEMP: recent models (active model only for now)
-  // ---------------------------------------------
   const recentModels = activeModel
     ? [
         {
@@ -33,6 +31,15 @@ export default function ModelSidebar() {
         },
       ]
     : [];
+
+  async function signOut() {
+    await fetch("/auth/sign-out", {
+      method: "POST",
+    });
+
+    // Force full reset so cookies + state are cleared
+    window.location.href = "/auth/sign-in";
+  }
 
   return (
     <div className="flex h-full flex-col bg-[#1E4258] text-[#E3E3E3]">
@@ -153,6 +160,19 @@ export default function ModelSidebar() {
           </div>
         </>
       )}
+
+      {/* SIGN OUT — SEPARATED SECTION */}
+      <div className="mt-auto border-t border-[#456882]/60 p-3">
+        <button
+          onClick={signOut}
+          className="flex items-center gap-2 w-full rounded-md px-2 py-1.5
+                     text-[13px] text-[#E3E3E3]/70 hover:bg-[#2A5672]
+                     transition"
+        >
+          <LogOut size={14} />
+          Sign Out
+        </button>
+      </div>
     </div>
   );
 }
