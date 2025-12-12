@@ -1,4 +1,4 @@
-import { SaaSCoreInputs } from "./store";
+import { SaaSCoreInputs } from "./types";
 
 export interface SaaSCoreModel {
   newCustomersPerMonth: number;
