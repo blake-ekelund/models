@@ -6,11 +6,10 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
 
-  const res = NextResponse.redirect(new URL("/models/catalog", req.url));
+  const origin = url.origin;
+  const res = NextResponse.redirect(`${origin}/models/catalog`);
 
-  if (!code) {
-    return res;
-  }
+  if (!code) return res;
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
