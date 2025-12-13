@@ -8,8 +8,8 @@ interface Props {
   query: string;
   setQuery: (v: string) => void;
 
-  view: "grid" | "table";
-  setView: (v: "grid" | "table") => void;
+  view: "table" | "grid";
+  setView: (v: "table" | "grid") => void;
 
   categories: string[];
   activeCategory: string;
@@ -33,7 +33,7 @@ export default function CatalogFilters({
         <div className="relative w-full sm:max-w-md">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#456882]"
           />
           <input
             type="text"
@@ -41,31 +41,24 @@ export default function CatalogFilters({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className={clsx(
-              "w-full rounded-lg border border-gray-200 bg-white",
+              "w-full rounded-lg bg-white border border-[#E3E3E3]",
               "pl-9 pr-3 py-2 text-sm",
-              "placeholder:text-gray-400",
-              "focus:outline-none focus:ring-2 focus:ring-[#00338d]/20 focus:border-[#00338d]"
+              "placeholder:text-[#456882]/70",
+              "focus:outline-none focus:ring-2 focus:ring-[#1B3C53]/30 focus:border-[#1B3C53]"
             )}
           />
         </div>
 
         {/* VIEW TOGGLE */}
-        <div className="relative inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+        <div className="relative inline-flex rounded-xl bg-[#F7F9FB] p-1">
           {/* Animated thumb */}
           <motion.div
             layout
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute inset-y-1 w-1/2 rounded-md bg-white shadow-sm"
+            className="absolute inset-y-1 w-1/2 rounded-lg bg-white shadow-sm border border-[#E3E3E3]"
             style={{
-              left: view === "grid" ? "0.25rem" : "50%",
+              left: view === "table" ? "0.25rem" : "50%",
             }}
-          />
-
-          <ToggleButton
-            active={view === "grid"}
-            onClick={() => setView("grid")}
-            label="Grid"
-            icon={<LayoutGrid size={14} />}
           />
 
           <ToggleButton
@@ -73,6 +66,13 @@ export default function CatalogFilters({
             onClick={() => setView("table")}
             label="Table"
             icon={<Table2 size={14} />}
+          />
+
+          <ToggleButton
+            active={view === "grid"}
+            onClick={() => setView("grid")}
+            label="Grid"
+            icon={<LayoutGrid size={14} />}
           />
         </div>
       </div>
@@ -91,10 +91,10 @@ export default function CatalogFilters({
                 setActiveCategory(cat === "All" ? "" : cat)
               }
               className={clsx(
-                "px-3 py-1.5 rounded-full text-sm transition",
+                "px-3 py-1.5 rounded-full text-sm font-medium transition",
                 active
-                  ? "bg-[#00338d]/10 text-[#00338d]"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-[#1B3C53]/10 text-[#1B3C53]"
+                  : "bg-[#F7F9FB] text-[#456882] hover:bg-[#E3E3E3]"
               )}
             >
               {cat}
@@ -128,7 +128,7 @@ function ToggleButton({
         "relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition",
         active
           ? "text-[#1B3C53]"
-          : "text-gray-500 hover:text-[#1B3C53]"
+          : "text-[#456882] hover:text-[#1B3C53]"
       )}
     >
       {icon}

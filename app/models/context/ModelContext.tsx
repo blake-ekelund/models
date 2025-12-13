@@ -25,7 +25,6 @@ interface ModelContextValue {
   }) => Promise<ModelInstance>;
 
   saveModel: (id: string) => Promise<void>;
-  renameModel: (id: string, name: string) => Promise<void>;
   deleteModel: (id: string) => Promise<void>;
 
   setActiveModel: (model: ModelInstance | null) => void;
@@ -34,49 +33,88 @@ interface ModelContextValue {
 
 const ModelContext = createContext<ModelContextValue | null>(null);
 
+/* --------------------------------------------------
+   Supabase → ModelInstance mapper (single source)
+-------------------------------------------------- */
+function mapRowToModel(m: any): ModelInstance {
+  return {
+    id: m.id,
+    name: m.name,
+    type: m.model_type,
+    status: m.status as ModelStatus,
+    lastEdited: new Date(m.last_edited_at),
+    inputs: m.inputs,
+  };
+}
+
 export function ModelProvider({ children }: { children: React.ReactNode }) {
   const [recentModels, setRecentModels] = useState<ModelInstance[]>([]);
   const [activeModel, setActiveModel] = useState<ModelInstance | null>(null);
 
   async function refreshModels() {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) return;
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    const { data } = await supabase
+    if (!session?.user) {
+      setRecentModels([]);
+      setActiveModel(null);
+      return;
+    }
+
+    const { data, error } = await supabase
       .from("models")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", session.user.id)
       .order("last_edited_at", { ascending: false });
 
-    if (!data) return;
+    if (error || !data) return;
 
-    const models: ModelInstance[] = data.map((m) => ({
-      id: m.id,
-      name: m.name,
-      type: m.model_type,
-      status: m.status as ModelStatus,
-      lastEdited: new Date(m.last_edited_at),
-      inputs: m.inputs,
-    }));
+    const models = data.map(mapRowToModel);
 
     setRecentModels(models);
-    setActiveModel(models[0] ?? null);
+    setActiveModel((prev) =>
+      prev ? models.find((m) => m.id === prev.id) ?? null : models[0] ?? null
+    );
   }
 
   useEffect(() => {
+    // Initial load
     refreshModels();
+
+    // Re-run whenever auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      refreshModels();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  async function createModel({ name, type, inputs }: any) {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("Not authenticated");
+  async function createModel({
+    name,
+    type,
+    inputs,
+  }: {
+    name: string;
+    type: string;
+    inputs: any;
+  }): Promise<ModelInstance> {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      throw new Error("Not authenticated");
+    }
 
     const { data, error } = await supabase
       .from("models")
       .insert({
-        user_id: user.id,
+        user_id: session.user.id,
         name,
         model_type: type,
         inputs,
@@ -85,10 +123,14 @@ export function ModelProvider({ children }: { children: React.ReactNode }) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error || !data) {
+      throw error ?? new Error("Failed to create model");
+    }
+
+    const model = mapRowToModel(data);
 
     await refreshModels();
-    return data;
+    return model;
   }
 
   async function saveModel(id: string) {
@@ -103,26 +145,11 @@ export function ModelProvider({ children }: { children: React.ReactNode }) {
     await refreshModels();
   }
 
-  async function renameModel(id: string, name: string) {
-    await supabase
-      .from("models")
-      .update({
-        name,
-        last_edited_at: new Date().toISOString(),
-      })
-      .eq("id", id);
-
-    await refreshModels();
-  }
-
   async function deleteModel(id: string) {
-    await supabase
-      .from("models")
-      .delete()
-      .eq("id", id);
+    await supabase.from("models").delete().eq("id", id);
 
-    await refreshModels();
     setActiveModel((prev) => (prev?.id === id ? null : prev));
+    await refreshModels();
   }
 
   return (
@@ -132,7 +159,6 @@ export function ModelProvider({ children }: { children: React.ReactNode }) {
         recentModels,
         createModel,
         saveModel,
-        renameModel,
         deleteModel,
         setActiveModel,
         refreshModels,
@@ -145,6 +171,8 @@ export function ModelProvider({ children }: { children: React.ReactNode }) {
 
 export function useModelContext() {
   const ctx = useContext(ModelContext);
-  if (!ctx) throw new Error("useModelContext must be used within ModelProvider");
+  if (!ctx) {
+    throw new Error("useModelContext must be used within ModelProvider");
+  }
   return ctx;
 }

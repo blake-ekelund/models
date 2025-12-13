@@ -1,3 +1,5 @@
+"use client";
+
 import { ModelProvider } from "@/app/models/context/ModelContext";
 import ModelSidebar from "@/app/models/components/ModelSidebar";
 
@@ -8,8 +10,8 @@ export default function ModelsLayout({
 }) {
   return (
     <ModelProvider>
-      <div className="flex h-screen overflow-hidden bg-gray-50">
-        <aside className="w-[260px] shrink-0 border-r border-[#456882]">
+      <div className="flex h-screen overflow-hidden bg-[#F7F9FB]">
+        <aside className="w-[260px] shrink-0 border-r border-[#E3E3E3]">
           <ModelSidebar />
         </aside>
 

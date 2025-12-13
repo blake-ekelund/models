@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import { CatalogModel } from "../page";
 
 interface Props {
@@ -8,8 +9,16 @@ interface Props {
 }
 
 export default function CatalogGridCard({ model, onSelect }: Props) {
+  const isAvailable = model.status === "Available";
+
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 flex justify-between gap-4">
+    <div
+      className={clsx(
+        "rounded-xl border bg-white p-5 flex justify-between gap-4 transition",
+        "border-[#E3E3E3]",
+        isAvailable && "hover:bg-[#F7F9FB] hover:border-[#1B3C53]/30"
+      )}
+    >
       <div className="space-y-1">
         <div className="text-sm font-medium text-[#1B3C53]">
           {model.name}
@@ -25,10 +34,15 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
       </div>
 
       <div className="flex items-center">
-        {model.status === "Available" ? (
+        {isAvailable ? (
           <button
             onClick={() => onSelect(model)}
-            className="text-sm font-medium text-[#00338d] hover:underline"
+            className="
+              text-sm font-medium
+              text-[#1B3C53]
+              hover:text-[#234C6A]
+              transition
+            "
           >
             Select
           </button>

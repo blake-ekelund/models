@@ -12,13 +12,16 @@ export default function CatalogTableRow({
   model,
   onSelect,
 }: Props) {
+  const isAvailable = model.status === "Available";
+
   return (
     <tr
       className={clsx(
-        "group transition",
-        "hover:bg-gray-50"
+        "group transition-colors",
+        "hover:bg-[#F7F9FB]"
       )}
     >
+      {/* MODEL */}
       <td className="px-6 py-4">
         {/* TITLE */}
         <div className="font-medium text-[#1B3C53]">
@@ -50,9 +53,9 @@ export default function CatalogTableRow({
         <span
           className={clsx(
             "inline-block rounded-full px-2 py-0.5 text-xs font-medium",
-            model.status === "Available"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-200 text-gray-600"
+            isAvailable
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-[#E3E3E3] text-[#456882]"
           )}
         >
           {model.status}
@@ -61,15 +64,20 @@ export default function CatalogTableRow({
 
       {/* ACTION */}
       <td className="px-6 py-4 text-right align-top">
-        {model.status === "Available" ? (
+        {isAvailable ? (
           <button
             onClick={() => onSelect(model)}
-            className="text-sm font-medium text-[#00338d] hover:underline"
+            className="
+              text-sm font-medium
+              text-[#1B3C53]
+              hover:text-[#234C6A]
+              transition
+            "
           >
             Select
           </button>
         ) : (
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-[#456882]/60">
             —
           </span>
         )}

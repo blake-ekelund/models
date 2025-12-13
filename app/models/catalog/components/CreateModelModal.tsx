@@ -56,7 +56,7 @@ export default function CreateModelModal({
 
           <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+            className="text-[#456882] hover:text-[#1B3C53] text-lg leading-none"
             aria-label="Close"
           >
             ✕
@@ -74,8 +74,11 @@ export default function CreateModelModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={defaultName}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm
-                         focus:outline-none focus:ring-2 focus:ring-[#00338d]/20 focus:border-[#00338d]"
+              className="
+                w-full rounded-lg bg-[#F7F9FB] border border-[#E3E3E3]
+                px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-[#1B3C53]/30 focus:border-[#1B3C53]
+              "
             />
           </Field>
 
@@ -87,8 +90,11 @@ export default function CreateModelModal({
             <select
               value={years}
               onChange={(e) => setYears(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm
-                         focus:outline-none focus:ring-2 focus:ring-[#00338d]/20 focus:border-[#00338d]"
+              className="
+                w-full rounded-lg bg-[#F7F9FB] border border-[#E3E3E3]
+                px-3 py-2 text-sm
+                focus:outline-none focus:ring-2 focus:ring-[#1B3C53]/30 focus:border-[#1B3C53]
+              "
             >
               {[1, 2, 3, 4, 5].map((y) => (
                 <option key={y} value={y}>
@@ -99,16 +105,17 @@ export default function CreateModelModal({
           </Field>
 
           {/* DESCRIPTION */}
-          <Field
-            label="Description (optional)"
-          >
+          <Field label="Description (optional)">
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="e.g. Board planning scenario, pricing test, fundraising model…"
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm resize-none
-                         focus:outline-none focus:ring-2 focus:ring-[#00338d]/20 focus:border-[#00338d]"
+              className="
+                w-full rounded-lg bg-[#F7F9FB] border border-[#E3E3E3]
+                px-3 py-2 text-sm resize-none
+                focus:outline-none focus:ring-2 focus:ring-[#1B3C53]/30 focus:border-[#1B3C53]
+              "
             />
           </Field>
         </div>
@@ -117,7 +124,13 @@ export default function CreateModelModal({
         <div className="flex justify-end gap-3 pt-2">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="
+              px-4 py-2 text-sm rounded-md
+              border border-[#E3E3E3]
+              text-[#456882]
+              hover:bg-[#F7F9FB]
+              transition
+            "
           >
             Cancel
           </button>
@@ -132,7 +145,7 @@ export default function CreateModelModal({
             }
             className={clsx(
               "px-4 py-2 text-sm rounded-md text-white transition",
-              "bg-[#00338d] hover:bg-[#002b73]"
+              "bg-[#1B3C53] hover:bg-[#234C6A]"
             )}
           >
             Create model

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useModelContext } from "@/app/models/context/ModelContext";
-import { DEFAULT_MODEL_INPUTS } from "@/app/models/defaultInputs";
 
 import CatalogFilters from "./components/CatalogFilters";
 import CatalogGrid from "./components/CatalogGrid";
@@ -37,7 +36,7 @@ export default function ModelsCatalogPage() {
   const [loading, setLoading] = useState(true);
 
   const [query, setQuery] = useState("");
-  const [view, setView] = useState<"grid" | "table">("grid");
+  const [view, setView] = useState<"table" | "grid">("table");
 
   const [activeCategory, setActiveCategory] = useState("");
   const [selectedModel, setSelectedModel] =
@@ -164,21 +163,17 @@ export default function ModelsCatalogPage() {
         open={!!selectedModel}
         defaultName={defaultName}
         onCancel={() => setSelectedModel(null)}
-        onCreate={async ({ name, years, description }) => {
+        onCreate={async ({ name }) => {
           if (!selectedModel) return;
 
           const instance = await createModel({
             name,
             type: selectedModel.slug,
-            inputs: {
-              ...DEFAULT_MODEL_INPUTS,
-              years,
-              description,
-            },
+            inputs: {}, // defaults will come from model definition later
           });
 
           setSelectedModel(null);
-          router.push(`/models/${instance.id}/overview`);
+          router.push(`/models/${instance.id}`);
         }}
       />
     </div>

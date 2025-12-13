@@ -13,20 +13,24 @@ export default function SavedModelsFilters({
 }: Props) {
   return (
     <div className="flex gap-2">
-      {(["All", "Draft", "Saved"] as const).map((f) => (
-        <button
-          key={f}
-          onClick={() => setFilter(f)}
-          className={clsx(
-            "rounded-md px-3 py-1 text-sm border transition",
-            filter === f
-              ? "bg-[#00338d] text-white border-[#00338d]"
-              : "text-gray-600 hover:bg-gray-50"
-          )}
-        >
-          {f === "All" ? "My Models" : f}
-        </button>
-      ))}
+      {(["All", "Draft", "Saved"] as const).map((f) => {
+        const isActive = filter === f;
+
+        return (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={clsx(
+              "rounded-md px-3 py-1 text-sm font-medium transition border",
+              isActive
+                ? "bg-[#1B3C53] text-white border-[#1B3C53]"
+                : "text-[#456882] border-[#E3E3E3] hover:bg-[#F7F9FB]"
+            )}
+          >
+            {f === "All" ? "My Models" : f}
+          </button>
+        );
+      })}
     </div>
   );
 }

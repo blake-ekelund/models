@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useModelContext } from "@/app/models/context/ModelContext";
-import { useSaaSCoreStore } from "@/app/models/engines/saas-core/store";
-import { exportSaaSCoreToExcel } from "@/app/models/engines/saas-core/exportToExcel";
+import type { ModelInstance, ModelStatus } from "@/app/models/context/ModelContext";
+
+import { exportModelToExcel } from "@/app/models/core/export/exportToExcel";
 
 import ConfirmDeleteModal from "@/app/models/saved/components/ConfirmDeleteModal";
 import SavedModelsFilters from "./components/SavedModelsFilters";
@@ -13,29 +14,36 @@ import SavedModelsTable from "./components/SavedModelsTable";
 
 export default function MyModelsPage() {
   const router = useRouter();
+
   const {
     recentModels,
     setActiveModel,
     deleteModel,
-    renameModel,
     saveModel,
   } = useModelContext();
 
-  const { inputs } = useSaaSCoreStore();
-
   const [filter, setFilter] =
-    useState<"All" | "Draft" | "Saved">("All");
+    useState<"All" | ModelStatus>("All");
 
   const [confirmDelete, setConfirmDelete] = useState<{
     id: string;
     name: string;
   } | null>(null);
 
-  function openModel(model: any) {
-    setActiveModel(model);
-    router.push(`/models/${model.id}/overview`);
-  }
+  /* ---------------------------------------------
+     Open model workspace
+  --------------------------------------------- */
+  const openModel = useCallback(
+    (model: ModelInstance) => {
+      setActiveModel(model);
+      router.push(`/models/${model.id}`);
+    },
+    [router, setActiveModel]
+  );
 
+  /* ---------------------------------------------
+     Filter models by status
+  --------------------------------------------- */
   const filteredModels =
     filter === "All"
       ? recentModels
@@ -63,7 +71,7 @@ export default function MyModelsPage() {
 
       {/* EMPTY STATE */}
       {isEmpty && (
-        <div className="rounded-xl border border-dashed border-gray-300 p-12 text-center space-y-4">
+        <div className="rounded-xl border border-dashed border-[#E3E3E3] p-12 text-center space-y-4 bg-white">
           <p className="text-sm text-[#456882]">
             {filter === "All"
               ? "You don’t have any models yet."
@@ -73,7 +81,15 @@ export default function MyModelsPage() {
           {filter === "All" && (
             <button
               onClick={() => router.push("/models/catalog")}
-              className="inline-flex items-center justify-center rounded-md bg-[#00338d] px-4 py-2 text-sm font-medium text-white hover:bg-[#002b73]"
+              className="
+                inline-flex items-center justify-center
+                rounded-lg
+                bg-[#1B3C53]
+                px-4 py-2
+                text-sm font-medium text-white
+                hover:bg-[#234C6A]
+                transition
+              "
             >
               Create your first model
             </button>
@@ -86,12 +102,11 @@ export default function MyModelsPage() {
         <SavedModelsTable
           models={filteredModels}
           onOpen={openModel}
-          onRename={renameModel}
           onSave={saveModel}
-          onExport={(name) =>
-            exportSaaSCoreToExcel(inputs, name)
+          onExport={(model: ModelInstance) =>
+            exportModelToExcel(model)
           }
-          onDelete={(id, name) =>
+          onDelete={(id: string, name: string) =>
             setConfirmDelete({ id, name })
           }
         />

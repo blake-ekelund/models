@@ -1,9 +1,18 @@
 "use client";
 
 import clsx from "clsx";
-import { Download, Share2, Trash2, Save } from "lucide-react";
-import EditableName from "./EditableName";
+import { Download, Trash2, Save } from "lucide-react";
+import type { ModelInstance } from "@/app/models/context/ModelContext";
 import ActionIcon from "./ActionIcon";
+
+interface Props {
+  model: ModelInstance;
+  showBorder: boolean;
+  onOpen: (model: ModelInstance) => void;
+  onSave: (id: string) => void;
+  onExport: (model: ModelInstance) => void;
+  onDelete: (id: string, name: string) => void;
+}
 
 function formatRelativeDate(date: Date) {
   const diffMs = Date.now() - date.getTime();
@@ -23,51 +32,52 @@ export default function SavedModelsRow({
   model,
   showBorder,
   onOpen,
-  onRename,
   onSave,
   onExport,
   onDelete,
-}: any) {
+}: Props) {
   return (
     <tr
       className={clsx(
-        "group transition hover:bg-gray-50",
-        showBorder && "border-t border-gray-100"
+        "group transition-colors hover:bg-[#F7F9FB] cursor-pointer",
+        showBorder && "border-t border-[#E3E3E3]"
       )}
+      onClick={() => onOpen(model)}
     >
+      {/* NAME */}
       <td className="px-4 py-2 font-medium text-[#1B3C53]">
-        <EditableName
-          name={model.name}
-          onSave={(n) => onRename(model.id, n)}
-          onOpen={() => onOpen(model)}
-        />
+        {model.name}
       </td>
 
-      <td
-        className="px-4 py-2 text-[#456882] cursor-pointer"
-        onClick={() => onOpen(model)}
-      >
+      {/* TYPE */}
+      <td className="px-4 py-2 text-[#456882]">
         {model.type}
       </td>
 
+      {/* STATUS */}
       <td className="px-4 py-2">
         <span
           className={clsx(
             "rounded-full px-2 py-0.5 text-xs font-medium",
             model.status === "Saved"
-              ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-amber-50 text-amber-700"
           )}
         >
           {model.status}
         </span>
       </td>
 
-      <td className="px-4 py-2 text-right text-gray-500">
+      {/* LAST EDITED */}
+      <td className="px-4 py-2 text-right text-[#456882] text-sm">
         {formatRelativeDate(model.lastEdited)}
       </td>
 
-      <td className="px-4 py-2 text-right">
+      {/* ACTIONS */}
+      <td
+        className="px-4 py-2 text-right"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
           {model.status === "Draft" && (
             <ActionIcon
@@ -80,23 +90,15 @@ export default function SavedModelsRow({
 
           <ActionIcon
             title="Download to Excel"
-            onClick={() => onExport(model.name)}
+            onClick={() => onExport(model)}
           >
             <Download size={16} />
           </ActionIcon>
 
-          {model.status === "Saved" && (
-            <ActionIcon title="Share">
-              <Share2 size={16} />
-            </ActionIcon>
-          )}
-
           <ActionIcon
             title="Delete permanently"
             danger
-            onClick={() =>
-              onDelete(model.id, model.name)
-            }
+            onClick={() => onDelete(model.id, model.name)}
           >
             <Trash2 size={16} />
           </ActionIcon>
