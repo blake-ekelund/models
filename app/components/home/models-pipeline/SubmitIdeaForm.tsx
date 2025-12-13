@@ -23,21 +23,18 @@ export default function SubmitIdeaForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!title.trim() || !description.trim()) return;
-
     onSubmit(title, description);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 pt-8">
-
       {/* HEADER */}
       <h4 className="text-xl font-semibold text-[#1B3C53] mb-2">
         Submit a New Model
       </h4>
 
-      {/* TITLE INPUT */}
+      {/* TITLE */}
       <div>
         <label className="block text-xs font-medium text-[#456882] mb-1">
           Model Title
@@ -45,16 +42,20 @@ export default function SubmitIdeaForm({
         <input
           ref={titleRef}
           className="
-            w-full px-3 py-2 rounded-lg border border-[#D0D4DA]
-            text-sm focus:outline-none focus:ring-2 focus:ring-[#3BAFDA]/40
+            w-full px-3 py-2 rounded-lg
+            border border-[#456882]/30
+            text-sm text-[#1B3C53]
+            placeholder:text-[#456882]/50
+            focus:outline-none
+            focus:ring-2 focus:ring-[#456882]/30
           "
-          placeholder="e.g., Pricing Elasticity Model"
+          placeholder="Pricing Elasticity Model"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
-      {/* DESCRIPTION INPUT */}
+      {/* DESCRIPTION */}
       <div>
         <label className="block text-xs font-medium text-[#456882] mb-1">
           Short Description
@@ -62,24 +63,32 @@ export default function SubmitIdeaForm({
         <textarea
           rows={4}
           className="
-            w-full px-3 py-2 rounded-lg border border-[#D0D4DA]
-            text-sm resize-none focus:outline-none
-            focus:ring-2 focus:ring-[#3BAFDA]/40
+            w-full px-3 py-2 rounded-lg
+            border border-[#456882]/30
+            text-sm text-[#1B3C53]
+            resize-none
+            placeholder:text-[#456882]/50
+            focus:outline-none
+            focus:ring-2 focus:ring-[#456882]/30
           "
-          placeholder="Describe what the model should help founders do..."
+          placeholder="Describe what the model should help founders do…"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
 
-      {/* BUTTONS */}
+      {/* ACTIONS */}
       <div className="flex justify-end gap-3 pt-2">
         <button
           type="button"
           onClick={onCancel}
           className="
-            px-4 py-2 rounded-lg border border-[#D0D4DA]
-            text-sm hover:bg-gray-100 transition
+            px-4 py-2 rounded-lg
+            text-sm font-medium
+            border border-[#456882]/30
+            text-[#1B3C53]
+            hover:bg-[#1B3C53]/5
+            transition
           "
         >
           Cancel
@@ -88,8 +97,11 @@ export default function SubmitIdeaForm({
         <button
           type="submit"
           className="
-            px-4 py-2 rounded-lg bg-[#3BAFDA] text-white 
-            text-sm font-medium hover:bg-[#3BAFDA]/90 transition
+            px-4 py-2 rounded-lg
+            text-sm font-medium
+            bg-[#234C6A] text-white
+            hover:bg-[#456882]
+            transition
           "
         >
           Submit

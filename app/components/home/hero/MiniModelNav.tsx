@@ -18,11 +18,11 @@ export default function MiniModelNav({
 }: MiniModelNavProps) {
   return (
     <div className="flex items-center justify-between mb-4">
-      
       {/* MODEL TABS */}
       <div className="flex gap-2 flex-wrap">
         {models.map((model) => {
           const isActive = activeModel === model;
+
           return (
             <button
               key={model}
@@ -31,8 +31,8 @@ export default function MiniModelNav({
                 px-3 py-1.5 rounded-lg text-sm font-medium transition
                 ${
                   isActive
-                    ? "bg-[#3BAFDA]/20 border border-[#3BAFDA]/50 text-[#E3E3E3]"
-                    : "text-[#E3E3E3]/60 hover:text-[#E3E3E3]"
+                    ? "bg-[#1B3C53]/10 text-[#1B3C53] border border-[#456882]/40"
+                    : "text-[#1B3C53]/60 hover:text-[#1B3C53]"
                 }
               `}
             >
@@ -42,22 +42,25 @@ export default function MiniModelNav({
         })}
       </div>
 
-      {/* RIGHT ACTION BUTTONS */}
+      {/* RIGHT ACTIONS */}
       <div className="flex items-center gap-2">
-
-        {/* SETTINGS BUTTON */}
-        <button
-          onClick={onSettings}
-          className="
-            p-2 rounded-full border border-[#456882]/50 
-            hover:bg-[#456882]/40 transition
-            w-9 h-9 flex items-center justify-center
-          "
-          aria-label="Model settings"
-        >
-          <Settings size={18} className="text-[#E3E3E3]" />
-        </button>
-
+        {onSettings && (
+          <button
+            onClick={onSettings}
+            className="
+              w-9 h-9
+              flex items-center justify-center
+              rounded-full
+              border border-[#456882]/40
+              text-[#1B3C53]
+              hover:bg-[#1B3C53]/5
+              transition
+            "
+            aria-label="Model settings"
+          >
+            <Settings size={18} />
+          </button>
+        )}
       </div>
     </div>
   );

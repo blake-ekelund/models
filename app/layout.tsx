@@ -14,16 +14,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="relative min-h-screen">
-
+      <body className="relative min-h-screen bg-white text-[#1B3C53]">
         {/* CONDITIONAL NAVBAR */}
         <NavbarGate />
 
         {/* PAGE CONTENT */}
-        <div className="py-0">
+        <main className="relative">
           {children}
-        </div>
-
+        </main>
       </body>
     </html>
   );

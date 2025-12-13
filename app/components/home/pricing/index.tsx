@@ -1,87 +1,168 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 
 export default function PricingPage() {
   return (
-    <div className="bg-[#1B3C53] text-[#E3E3E3] px-6 py-10 flex justify-center">
+    <div className="bg-white text-[#1B3C53] py-24">
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-xl"
+        className="max-w-6xl mx-auto px-6"
       >
-        {/* HEADER */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-3">
-            Simple Pricing, Built for Founders
+        {/* HEADER — LEFT ALIGNED */}
+        <div className="max-w-3xl mb-12">
+          <h1 className="text-4xl font-bold mb-4">
+            One Plan. Built for Founders.
           </h1>
-
-          <p className="text-[#E3E3E3]/80 text-base leading-relaxed max-w-xl mx-auto">
-            All models. All updates. One flat monthly subscription.
+          <p className="text-[#456882] text-lg">
+            Synario gives you clear financial models, honest assumptions,
+            and a community-driven roadmap — without pricing games.
           </p>
         </div>
 
-        {/* PRICING CARD */}
-        <div
-          className="
-            bg-[#234C6A] border border-[#456882]/50 
-            rounded-2xl p-6 shadow-xl
-            backdrop-blur-sm space-y-6
-          "
-        >
-          {/* Price + CTA */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-5xl font-extrabold">$20/mo</div>
+        {/* PRICING CARD — CENTERED DECISION OBJECT */}
+        <div className="flex justify-center">
+          <div className="w-full max-w-xl">
+            <div className="border border-[#456882]/30 rounded-2xl p-8 mb-10">
+              {/* PRICE */}
+              <div className="flex items-end gap-3 mb-6">
+                <div className="text-5xl font-bold">$20</div>
+                <div className="text-[#456882] text-base mb-1">
+                  per month
+                </div>
+              </div>
+
+              <p className="text-[#456882] mb-8 max-w-lg">
+                Full access to everything we build — now and in the future.
+                No tiers. No usage limits.
+              </p>
+
+              {/* BENEFITS */}
+              <div className="space-y-8 text-sm">
+                {/* MODELING */}
+                <div>
+                  <h3 className="text-base font-semibold mb-3">
+                    Modeling
+                  </h3>
+                  <ul className="space-y-2">
+                    {[
+                      "Clear, explicit assumptions in every model",
+                      "Live updates as you adjust inputs",
+                      "Revenue, cash flow, pricing, and planning models",
+                      "Base / Bear / Bull scenario switching",
+                      "Export results to Excel or PDF",
+                      "New models shipped regularly",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check
+                          size={16}
+                          className="text-[#456882] mt-0.5"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* COMMUNITY */}
+                <div>
+                  <h3 className="text-base font-semibold mb-3">
+                    Community
+                  </h3>
+                  <ul className="space-y-2">
+                    {[
+                      "Request new models based on real needs",
+                      "Vote on what we build next",
+                      "Public roadmap shaped by founders, not sales demos",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check
+                          size={16}
+                          className="text-[#456882] mt-0.5"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* SUPPORT */}
+                <div>
+                  <h3 className="text-base font-semibold mb-3">
+                    Support
+                  </h3>
+                  <ul className="space-y-2">
+                    {[
+                      "Email support with a 24-hour response target",
+                      "Weekly tutorial videos and walkthroughs",
+                      "Live office hours (first-come, first-served)",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check
+                          size={16}
+                          className="text-[#456882] mt-0.5"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* PHILOSOPHY */}
+                <div>
+                  <h3 className="text-base font-semibold mb-3">
+                    Founder-First Pricing
+                  </h3>
+                  <ul className="space-y-2">
+                    {[
+                      "No seat-based pricing",
+                      "No feature gating",
+                      "No penalties for being small",
+                      "Automatic cancellation after 3 months of inactivity",
+                      "Your data is archived for a full year — nothing is lost if you return",
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check
+                          size={16}
+                          className="text-[#456882] mt-0.5"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="mt-10">
+                <Link
+                  href="/auth/sign-up"
+                  className="
+                    inline-flex items-center justify-center
+                    px-6 py-3 rounded-lg
+                    text-sm font-semibold
+                    bg-[#234C6A] text-white
+                    hover:bg-[#456882]
+                    transition
+                  "
+                >
+                  Start Using Synario
+                </Link>
+              </div>
             </div>
-
-            <Link
-              href="/signup"
-              className="
-                px-5 py-2.5 rounded-lg bg-[#3BAFDA] text-[#1B3C53] 
-                font-semibold text-base hover:bg-[#3BAFDA]/90 
-                transition flex items-center gap-2 shadow-sm
-              "
-            >
-              Get Access
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          {/* Minimal List */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3">What You Get</h3>
-
-            <ul className="space-y-2 text-sm">
-              {[
-                "Unlimited access to all financial models",
-                "Export results to Excel or PDF",
-                "Request one new model each month",
-                "Vote daily on new model ideas",
-                "Email support (24-hour response time)",
-                "Switch between Base / Bear / Bull scenarios",
-                "Real-time updates as you adjust inputs",
-                "Clear explanations for all assumptions",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <CheckCircle
-                    size={16}
-                    className="text-emerald-400 mt-0.5 shrink-0"
-                  />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 
-        {/* Footer Note */}
-        <div className="text-center text-xs text-[#E3E3E3]/60 mt-6 flex items-center justify-center gap-2">
-          <Sparkles size={14} className="text-[#3BAFDA]" />
-          <span>No contracts. No hidden fees. Cancel anytime.</span>
+        {/* FOOTNOTE — LEFT ALIGNED */}
+        <div className="max-w-3xl">
+          <p className="text-xs text-[#456882]">
+            If Synario doesn’t help you understand your numbers or make better
+            decisions, you shouldn’t pay for it. That’s the deal.
+          </p>
         </div>
       </motion.div>
     </div>

@@ -29,7 +29,7 @@ export default function NavBar() {
   }, []);
 
   // ---------------------------------------------------
-  // PROPER SIGN OUT
+  // SIGN OUT
   // ---------------------------------------------------
   async function signOut() {
     await supabase.auth.signOut();
@@ -38,41 +38,41 @@ export default function NavBar() {
   }
 
   return (
-    <header className="fixed top-0 left-0 w-full z-[9998] bg-white border-b border-gray-200 shadow-sm">
+    <header className="fixed top-0 left-0 w-full z-[9998] bg-[#E3E3E3] border-b border-[#1B3C53]/10">
       <nav className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* LOGO */}
         <Link
           href="/"
-          className="text-xl font-bold text-[#1B3C53] tracking-tight"
+          className="text-xl font-semibold tracking-tight text-[#1B3C53]"
         >
           Synario
         </Link>
 
         {/* MOBILE TOGGLE */}
         <button
-          className="md:hidden p-2 text-[#1B3C53] hover:bg-gray-100 rounded-lg"
+          className="md:hidden p-2 rounded-lg text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
           onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
 
         {/* DESKTOP NAV */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1B3C53]">
-          <a href="#library" className="hover:text-[#3BAFDA] transition">
-            Library
-          </a>
-          <a href="#pipeline" className="hover:text-[#3BAFDA] transition">
-            Pipeline
-          </a>
-          <a href="#pricing" className="hover:text-[#3BAFDA] transition">
-            Pricing
-          </a>
-          <a href="#about" className="hover:text-[#3BAFDA] transition">
-            About
-          </a>
-          <a href="#contact" className="hover:text-[#3BAFDA] transition">
-            Contact
-          </a>
+          {[
+            ["Library", "#library"],
+            ["Pipeline", "#pipeline"],
+            ["Pricing", "#pricing"],
+            ["About", "#about"],
+          ].map(([label, href]) => (
+            <a
+              key={label}
+              href={href}
+              className="hover:text-[#456882] transition"
+            >
+              {label}
+            </a>
+          ))}
         </div>
 
         {/* DESKTOP CTA */}
@@ -81,14 +81,14 @@ export default function NavBar() {
             <>
               <Link
                 href="/auth/sign-in"
-                className="px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm hover:bg-gray-100 transition"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
               >
                 Log In
               </Link>
 
               <Link
                 href="/auth/sign-up"
-                className="px-4 py-2 rounded-lg bg-[#3BAFDA] text-[#1B3C53] font-semibold text-sm hover:bg-[#3BAFDA]/90 transition"
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#234C6A] text-white hover:bg-[#456882] transition"
               >
                 Sign Up
               </Link>
@@ -98,7 +98,7 @@ export default function NavBar() {
           {signedIn === true && (
             <button
               onClick={signOut}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#1B3C53] font-semibold text-sm hover:bg-gray-100 transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
             >
               <LogOut size={16} />
               Log Out
@@ -109,35 +109,34 @@ export default function NavBar() {
 
       {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden px-4 pb-4 space-y-3 text-sm font-medium text-[#1B3C53] bg-white border-b border-gray-200">
-          <a href="#library" className="block hover:text-[#3BAFDA]">
-            Library
-          </a>
-          <a href="#pipeline" className="block hover:text-[#3BAFDA]">
-            Pipeline
-          </a>
-          <a href="#pricing" className="block hover:text-[#3BAFDA]">
-            Pricing
-          </a>
-          <a href="#about" className="block hover:text-[#3BAFDA]">
-            About
-          </a>
-          <a href="#contact" className="block hover:text-[#3BAFDA]">
-            Contact
-          </a>
+        <div className="md:hidden px-4 pb-4 space-y-3 text-sm font-medium text-[#1B3C53] bg-[#E3E3E3] border-t border-[#1B3C53]/10">
+          {[
+            ["Library", "#library"],
+            ["Pipeline", "#pipeline"],
+            ["Pricing", "#pricing"],
+            ["About", "#about"],
+          ].map(([label, href]) => (
+            <a
+              key={label}
+              href={href}
+              className="block hover:text-[#456882] transition"
+            >
+              {label}
+            </a>
+          ))}
 
           {signedIn === false && (
             <>
               <Link
                 href="/auth/sign-in"
-                className="block mt-2 px-4 py-2 rounded-lg text-[#1B3C53] font-semibold hover:bg-gray-100 transition"
+                className="block mt-2 px-4 py-2 rounded-lg font-semibold hover:bg-[#1B3C53]/5 transition"
               >
                 Log In
               </Link>
 
               <Link
                 href="/auth/sign-up"
-                className="block px-4 py-2 rounded-lg mt-1 bg-[#3BAFDA] text-[#1B3C53] font-semibold hover:bg-[#3BAFDA]/90 transition"
+                className="block px-4 py-2 rounded-lg mt-1 bg-[#234C6A] text-white font-semibold hover:bg-[#456882] transition"
               >
                 Sign Up
               </Link>
@@ -147,7 +146,7 @@ export default function NavBar() {
           {signedIn === true && (
             <button
               onClick={signOut}
-              className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg text-[#1B3C53] font-semibold hover:bg-gray-100 transition"
+              className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg font-semibold hover:bg-[#1B3C53]/5 transition"
             >
               <LogOut size={16} />
               Log Out

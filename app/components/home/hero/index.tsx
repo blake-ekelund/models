@@ -18,7 +18,7 @@ export default function Home() {
   const [activeModel, setActiveModel] = useState("Revenue Model");
 
   /* -------------------------------------
-     BACKGROUND PARTICLE CANVAS
+     BACKGROUND PARTICLES
   -------------------------------------- */
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -35,7 +35,7 @@ export default function Home() {
     window.addEventListener("resize", resize);
 
     const POINTS = 60;
-    const SPEED = 0.4;
+    const SPEED = 0.35;
 
     const particles = Array.from({ length: POINTS }, () => ({
       x: Math.random() * width,
@@ -46,8 +46,9 @@ export default function Home() {
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "#f5f5f599";
 
+      // Dots
+      ctx.fillStyle = "rgba(227,227,227,0.35)";
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
@@ -60,7 +61,8 @@ export default function Home() {
         ctx.fill();
       }
 
-      ctx.strokeStyle = "#37b5f08f";
+      // Lines
+      ctx.strokeStyle = "rgba(69,104,130,0.35)";
       ctx.lineWidth = 1;
 
       for (let i = 0; i < POINTS; i++) {
@@ -94,27 +96,29 @@ export default function Home() {
   -------------------------------------- */
   return (
     <div
-      className="relative w-full min-h-screen text-white overflow-x-hidden"
+      className="relative w-full min-h-screen overflow-x-hidden"
       style={{ backgroundColor: "#1B3C53" }}
     >
-      {/* Canvas Behind Everything */}
+      {/* Canvas */}
       <canvas
         ref={canvasRef}
         className="fixed inset-0 z-0 w-full h-full pointer-events-none"
       />
 
-      {/* Main Content */}
+      {/* Content */}
       <div className="relative z-10 w-full min-h-screen flex justify-center items-center">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-7xl px-4 lg:px-4 flex flex-col lg:flex-row items-center lg:items-start justify-between gap-20"
+          className="w-full max-w-7xl px-4 flex flex-col lg:flex-row items-center lg:items-start justify-between gap-20"
         >
           {/* LEFT — HERO */}
-          <div className="flex-1 max-w-lg text-center lg:text-left">
+          <div className="flex-1 max-w-lg text-center lg:text-left text-[#E3E3E3]">
             <h1 className="text-6xl font-bold leading-tight mb-6">
-              Financial Clarity<br />for Every Founder.
+              Financial Clarity
+              <br />
+              for Every Founder.
             </h1>
 
             <p className="text-[#E3E3E3]/80 text-lg leading-relaxed mb-10">
@@ -125,9 +129,12 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
               <Link
                 href="/"
-                className="px-6 py-3 rounded-full text-lg font-semibold 
-                           bg-[#E3E3E3] text-[#1B3C53]
-                           shadow hover:scale-[1.03] transition w-full sm:w-auto"
+                className="
+                  px-6 py-3 rounded-full text-lg font-semibold
+                  bg-[#E3E3E3] text-[#1B3C53]
+                  shadow hover:scale-[1.03] transition
+                  w-full sm:w-auto
+                "
               >
                 Build a Financial Model
               </Link>
@@ -135,10 +142,13 @@ export default function Home() {
               <Link
                 href="/#library"
                 className="
-                  px-6 py-3 rounded-full text-lg 
-                  border border-[#456882] text-[#E3E3E3] 
-                  bg-[#234C6A]/40 hover:bg-[#234C6A]/70 
-                  hover:border-[#E3E3E3] transition
+                  px-6 py-3 rounded-full text-lg
+                  border border-[#456882]
+                  text-[#E3E3E3]
+                  bg-[#234C6A]/40
+                  hover:bg-[#234C6A]/70
+                  hover:border-[#E3E3E3]
+                  transition
                   w-full sm:w-auto
                 "
               >
@@ -147,7 +157,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* RIGHT — MINI TOOL */}
+          {/* RIGHT — MINI MODEL */}
           <MiniModelContainer ref={modelRef}>
             <MiniModelNav
               models={models}
@@ -160,7 +170,6 @@ export default function Home() {
             {activeModel === "Cash Flow Model" && <CashFlowMini />}
             {activeModel === "Explore More" && <ExploreMoreModels />}
           </MiniModelContainer>
-
         </motion.div>
       </div>
     </div>

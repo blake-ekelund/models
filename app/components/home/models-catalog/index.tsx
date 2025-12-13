@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 import CatalogHeader from "./ModelsHeader";
 import ModelGrid from "./ModelGrid";
@@ -21,8 +22,11 @@ export type ModelCategory =
 export type ModelStatus = "Available" | "Coming Soon";
 
 export interface CatalogModel extends ModelCardProps {
+  id: string;
+  slug: string;
   popularity: number;
   premium: boolean;
+  created_at: string;
 }
 
 // ---------------------------------------------------
@@ -31,109 +35,135 @@ export interface CatalogModel extends ModelCardProps {
 
 export default function ModelsCatalog() {
   const [view, setView] = useState<"grid" | "list">("grid");
-  const [query, setQuery] = useState<string>("");
-  const [category, setCategory] = useState<string>("All");
-  const [sort, setSort] = useState<string>("Popular");
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All");
+  const [sort, setSort] = useState("Popular");
+
+  const [models, setModels] = useState<CatalogModel[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // ---------------------------------------------------
-  // MODEL DATA (strictly typed)
+  // FETCH FROM SUPABASE
   // ---------------------------------------------------
 
-  const models: CatalogModel[] = [
-    {
-      name: "Revenue Model (SaaS)",
-      desc: "Forecast MRR, ARR, churn, CAC, and subscriber growth.",
-      status: "Available",
-      category: "Revenue",
-      popularity: 95,
-      premium: false,
-      isNew: false,
-    },
-    {
-      name: "Cash Flow Model",
-      desc: "Project 12 months of ending cash, runway, and burn.",
-      status: "Available",
-      category: "Cash Flow",
-      popularity: 90,
-      premium: true,
-      isNew: false,
-    },
-    {
-      name: "Pricing Model",
-      desc: "Test pricing tiers, elasticity, and revenue impact.",
-      status: "Coming Soon",
-      category: "Revenue",
-      popularity: 80,
-      premium: false,
-      isNew: false,
-    },
-  ];
+  useEffect(() => {
+    async function loadModels() {
+      setLoading(true);
 
-  // ---------------------------------------------------
-  // FILTERING + SORTING
-  // ---------------------------------------------------
+      const { data, error } = await supabase
+        .from("model_catalog")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  const matchesFilters = (m: CatalogModel) => {
-    const matchesQuery = m.name.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = category === "All" || m.category === category;
-    return matchesQuery && matchesCategory;
-  };
+      if (error) {
+        console.error("Failed to load model catalog:", error);
+        setLoading(false);
+        return;
+      }
 
-  const sortedModels = [...models].sort((a, b) => {
-    switch (sort) {
-      case "Popular":
-        return b.popularity - a.popularity;
-      case "New":
-        return Number(b.isNew ?? 0) - Number(a.isNew ?? 0);
-      case "Free":
-        return Number(a.premium) - Number(b.premium);
-      case "Premium":
-        return Number(b.premium) - Number(a.premium);
-      default:
-        return 0;
+      const mapped: CatalogModel[] = data.map((m) => {
+        const createdAt = new Date(m.created_at);
+        const daysOld =
+          (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+
+        return {
+          id: m.id,
+          slug: m.slug,
+          name: m.name,
+          desc: m.description,
+          category: m.category as ModelCategory,
+          status: m.status as ModelStatus,
+          created_at: m.created_at,
+
+          // heuristics (replace later)
+          isNew: daysOld < 14,
+          popularity: 100 - Math.min(daysOld, 90),
+          premium: false,
+
+          onStart:
+            m.status === "Available"
+              ? () => {
+                  window.location.href = `/models/${m.slug}`;
+                }
+              : undefined,
+        };
+      });
+
+      setModels(mapped);
+      setLoading(false);
     }
-  });
 
-  const filtered = sortedModels.filter(matchesFilters);
+    loadModels();
+  }, []);
+
+  // ---------------------------------------------------
+  // FILTERING
+  // ---------------------------------------------------
+
+  const filtered = useMemo(() => {
+    return models
+      .filter((m) => {
+        const matchesQuery = m.name
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const matchesCategory =
+          category === "All" || m.category === category;
+        return matchesQuery && matchesCategory;
+      })
+      .sort((a, b) => {
+        switch (sort) {
+          case "Popular":
+            return b.popularity - a.popularity;
+          case "New":
+            return Number(b.isNew ?? 0) - Number(a.isNew ?? 0);
+          case "Free":
+            return Number(a.premium) - Number(b.premium);
+          case "Premium":
+            return Number(b.premium) - Number(a.premium);
+          default:
+            return 0;
+        }
+      });
+  }, [models, query, category, sort]);
 
   // ---------------------------------------------------
   // RENDER
   // ---------------------------------------------------
 
-return (
-  <section
-    className="
-      relative 
-      z-10 
-      w-full max-w-6xl mx-auto 
-      py-20 px-6 
-      bg-white 
-      text-[#1B3C53]
-    "
-  >
-    <CatalogHeader
-      query={query}
-      setQuery={setQuery}
-      view={view}
-      setView={setView}
-      category={category}
-      setCategory={setCategory}
-      sort={sort}
-      setSort={setSort}
-    />
+  return (
+    <section
+      className="
+        relative z-10
+        w-full max-w-6xl mx-auto
+        py-20 px-6
+        bg-white
+        text-[#1B3C53]
+      "
+    >
+      <CatalogHeader
+        query={query}
+        setQuery={setQuery}
+        view={view}
+        setView={setView}
+        category={category}
+        setCategory={setCategory}
+        sort={sort}
+        setSort={setSort}
+      />
 
-    {view === "grid" ? (
-      <ModelGrid models={filtered} />
-    ) : (
-      <ModelTable models={filtered} />
-    )}
+      {loading ? (
+        <p className="text-[#456882]">Loading models…</p>
+      ) : view === "grid" ? (
+        <ModelGrid models={filtered} />
+      ) : (
+        <ModelTable models={filtered} />
+      )}
 
-    {filtered.length === 0 && (
-      <p className="text-center text-[#456882] mt-8">
-        No models match your search.
-      </p>
-    )}
-  </section>
-);
-
+      {!loading && filtered.length === 0 && (
+        <p className="text-center text-[#456882] mt-8">
+          No models match your search.
+        </p>
+      )}
+    </section>
+  );
 }

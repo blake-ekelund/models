@@ -17,10 +17,8 @@ export default function ModelRow({
   desc,
   status,
   category,
-  isNew = false,
   onStart,
 }: ModelRowProps) {
-
   const Icons: Record<ModelCategory, React.ElementType> = {
     Revenue: TrendingUp,
     "Cash Flow": Wallet,
@@ -38,11 +36,6 @@ export default function ModelRow({
       <td className="py-3 px-4 font-medium text-[#1B3C53]">
         <div className="flex items-center gap-2">
           {name}
-          {isNew && (
-            <span className="text-[#3BAFDA] text-[10px] font-semibold px-2 py-0.5 bg-[#3BAFDA]/10 rounded-full">
-              New
-            </span>
-          )}
         </div>
       </td>
 
@@ -50,8 +43,10 @@ export default function ModelRow({
       <td className="py-3 px-4">
         <span
           className="
-            inline-flex items-center gap-1 text-xs font-semibold 
-            px-2 py-1 bg-[#3BAFDA]/10 text-[#3BAFDA] rounded-full
+            inline-flex items-center gap-1
+            text-xs font-semibold
+            px-2 py-1 rounded-full
+            bg-[#456882]/10 text-[#456882]
           "
         >
           <Icon size={12} /> {category}
@@ -59,33 +54,42 @@ export default function ModelRow({
       </td>
 
       {/* DESCRIPTION */}
-      <td className="py-3 px-4 text-sm text-[#456882]">{desc}</td>
+      <td className="py-3 px-4 text-sm text-[#456882]">
+        {desc}
+      </td>
 
       {/* STATUS */}
       <td className="py-3 px-4">
         {isAvailable ? (
-          <span className="text-blue-600 text-xs font-semibold px-2 py-1 bg-blue-100 rounded-full">
+          <span className="
+            text-xs font-semibold px-2 py-1 rounded-full
+            bg-[#456882]/10 text-[#456882]
+          ">
             Available
           </span>
         ) : (
-          <span className="text-[#3BAFDA] text-xs font-semibold px-2 py-1 bg-[#3BAFDA]/10 rounded-full">
+          <span className="
+            text-xs font-semibold px-2 py-1 rounded-full
+            bg-[#1B3C53]/10 text-[#1B3C53]
+          ">
             Coming Soon
           </span>
         )}
       </td>
 
-      {/* ACTION BUTTON — CENTERED */}
+      {/* ACTION */}
       <td className="py-3 px-4 text-center">
         <button
           onClick={isAvailable ? onStart : undefined}
           disabled={!isAvailable}
           className={`
-            inline-flex items-center justify-center gap-1 
-            text-sm font-semibold transition whitespace-nowrap
+            inline-flex items-center justify-center
+            text-sm font-semibold whitespace-nowrap
+            transition
             ${
               isAvailable
-                ? "text-[#3BAFDA] hover:text-[#1B3C53]"
-                : "text-gray-400 cursor-not-allowed"
+                ? "text-[#456882] hover:text-[#1B3C53]"
+                : "text-[#456882]/40 cursor-not-allowed"
             }
           `}
         >

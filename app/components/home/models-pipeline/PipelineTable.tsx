@@ -24,18 +24,19 @@ export default function PipelineTable({ items, vote, page, pageSize }: Props) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="
-        w-full overflow-hidden rounded-xl 
-        border border-[#E1E5EB] shadow-sm bg-white
+        w-full overflow-hidden rounded-xl
+        bg-white
+        border border-[#456882]/30
+        shadow-sm
       "
     >
       <table className="w-full border-collapse bg-white">
-
         {/* HEADER */}
         <thead
           className="
-            bg-[#F8FAFC] 
-            text-[#1B3C53] 
-            border-b border-[#E1E5EB]
+            bg-[#E3E3E3]
+            text-[#1B3C53]
+            border-b border-[#456882]/30
           "
         >
           <tr className="text-left text-sm font-semibold">
@@ -57,8 +58,8 @@ export default function PipelineTable({ items, vote, page, pageSize }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.18, delay: index * 0.02 }}
                 className="
-                  border-b border-[#E1E5EB]
-                  hover:bg-[#F4F7FA]
+                  border-b border-[#456882]/20
+                  hover:bg-[#1B3C53]/5
                   transition-colors
                 "
               >
@@ -71,7 +72,6 @@ export default function PipelineTable({ items, vote, page, pageSize }: Props) {
             );
           })}
         </tbody>
-
       </table>
     </motion.div>
   );

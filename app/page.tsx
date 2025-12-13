@@ -8,8 +8,8 @@ import ModelsCatalog from "./components/home/models-catalog";
 import ModelsPipeline from "./components/home/models-pipeline";
 import Pricing from "./components/home/pricing";
 import About from "./components/home/about";
-import Contact from "./components/home/contact";
 
+import Footer from "./components/Footer";
 import Modal from "./components/ui/Modal";
 import SubmitIdeaForm from "./components/home/models-pipeline/SubmitIdeaForm";
 
@@ -28,6 +28,7 @@ export default function HomePage() {
 
   return (
     <>
+      {/* MODAL */}
       <Modal open={showIdeaModal} onClose={() => setShowIdeaModal(false)}>
         {submitIdea ? (
           <SubmitIdeaForm
@@ -42,12 +43,11 @@ export default function HomePage() {
         )}
       </Modal>
 
-      {/* PAGE CONTENT */}
-      <div className="relative z-0 w-full min-h-screen bg-[#1B3C53] text-white flex flex-col items-center">
-        
+      {/* PAGE ROOT — owns navbar offset + dark world */}
+      <div className="relative w-full min-h-screen bg-[#1B3C53] text-white pt-[72px]">
         {/* HERO */}
         <motion.div
-          id="/#home"
+          id="home"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -56,67 +56,64 @@ export default function HomePage() {
           <Hero />
         </motion.div>
 
-        {/* WHITE SECTIONS */}
-        <div className="w-full text-[#1B3C53]">
-
-          {/* MODEL CATALOG — #library */}
-          <motion.div
+        {/* WHITE WORLD — visually nested into hero */}
+        <div
+          className="
+            relative w-full
+            bg-white text-[#1B3C53]
+            rounded-t-[48px]
+            -mt-32 pt-32
+          "
+        >
+          {/* MODEL CATALOG */}
+          <motion.section
             id="library"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="bg-white w-full mt-12"
+            className="scroll-mt-[96px]"
           >
             <ModelsCatalog />
-          </motion.div>
+          </motion.section>
 
-          {/* MODEL PIPELINE — #pipeline */}
-          <motion.div
+          {/* MODEL PIPELINE */}
+          <motion.section
             id="pipeline"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="w-full mt-0 mb-12"
+            className="scroll-mt-[96px] mt-12"
           >
             <ModelsPipeline
               openModal={() => setShowIdeaModal(true)}
               registerSubmit={handleRegisterSubmit}
             />
-          </motion.div>
+          </motion.section>
 
-          {/* PRICING — #pricing */}
-          <motion.div
+          {/* PRICING */}
+          <motion.section
             id="pricing"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7 }}
-            className="w-full mt-12 mb-0"
+            className="scroll-mt-[96px] mt-12"
           >
             <Pricing />
-          </motion.div>
+          </motion.section>
 
-          {/* ABOUT — #about */}
-          <motion.div
+          {/* ABOUT — micro trust section */}
+          <motion.section
             id="about"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7 }}
-            className="w-full mt-12 mb-0"
+            className="scroll-mt-[96px] mt-12"
           >
             <About />
-          </motion.div>              
-          
-          {/* CONTACT — #contact */}
-          <motion.div
-            id="contact"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7 }}
-            className="w-full mt-12 mb-0"
-          >
-            <Contact />
-          </motion.div>          
+          </motion.section>
 
+          {/* FOOTER */}
+          <Footer />
         </div>
       </div>
     </>

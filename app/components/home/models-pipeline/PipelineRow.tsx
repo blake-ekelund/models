@@ -23,39 +23,37 @@ export default function PipelineRow({ item, globalIndex, vote }: RowProps) {
       </td>
 
       {/* DESCRIPTION */}
-      <td className="py-4 px-4 text-sm text-[#4A6A83] leading-snug max-w-lg">
+      <td className="py-4 px-4 text-sm text-[#456882] leading-snug max-w-lg">
         {item.description}
       </td>
 
       {/* VOTES + CONTROLS */}
       <td className="py-4 px-1.5">
         <div className="flex items-center justify-end gap-3">
-
-          {/* Vote count pill */}
+          {/* Vote count */}
           <span
             className="
               text-xs font-semibold
-              px-1.5 py-1
-              rounded-full
-              bg-[#3BAFDA]/10
-              text-[#1B3C53]
+              px-2 py-1 rounded-full
+              bg-[#456882]/10
+              text-[#456882]
             "
           >
             {item.votes} votes
           </span>
 
-          {/* Controls (inline, minimal, like ModelRow action button) */}
+          {/* Controls */}
           <div className="flex items-center gap-1">
-
             <button
               onClick={() => vote(globalIndex, +1)}
               className="
                 p-1.5 rounded-md
-                text-[#3BAFDA]
+                text-[#456882]
                 hover:text-[#1B3C53]
-                hover:bg-gray-100
+                hover:bg-[#1B3C53]/5
                 transition
               "
+              aria-label="Upvote"
             >
               <ArrowUp size={15} />
             </button>
@@ -64,15 +62,15 @@ export default function PipelineRow({ item, globalIndex, vote }: RowProps) {
               onClick={() => vote(globalIndex, -1)}
               className="
                 p-1.5 rounded-md
-                text-[#3BAFDA]
+                text-[#456882]
                 hover:text-[#1B3C53]
-                hover:bg-gray-100
+                hover:bg-[#1B3C53]/5
                 transition
               "
+              aria-label="Downvote"
             >
               <ArrowDown size={15} />
             </button>
-
           </div>
         </div>
       </td>

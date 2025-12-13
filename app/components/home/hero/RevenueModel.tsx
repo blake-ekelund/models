@@ -20,7 +20,7 @@ export default function RevenueModel() {
   const [churn, setChurn] = useState(5);
   const [arppu, setArppu] = useState(20);
 
-  // Month labels (MMM)
+  // Month labels
   const monthLabels = useMemo(() => {
     const now = new Date();
     return Array.from({ length: 12 }, (_, i) => {
@@ -29,33 +29,29 @@ export default function RevenueModel() {
     });
   }, []);
 
-  // 12-Month Revenue + Subscribers Model
+  // Model
   const model = useMemo(() => {
-    const arr = [];
     const churnRate = churn / 100;
     const acquired = adSpend / cac;
 
     let subscribers = acquired;
 
-    for (let i = 0; i < 12; i++) {
+    return Array.from({ length: 12 }, (_, i) => {
       if (i > 0) {
         subscribers = subscribers * (1 - churnRate) + acquired;
       }
-      const mrr = subscribers * arppu;
 
-      arr.push({
+      return {
         subscribers,
-        mrr,
-      });
-    }
-
-    return arr;
+        mrr: subscribers * arppu,
+      };
+    });
   }, [adSpend, cac, churn, arppu]);
 
   const month12 = model[11];
   const ARR = month12.mrr * 12;
 
-  // Combined Chart Data
+  // Chart data
   const combinedData = {
     labels: monthLabels,
     datasets: [
@@ -63,8 +59,8 @@ export default function RevenueModel() {
         type: "line" as const,
         label: "Subscribers",
         data: model.map((m) => m.subscribers),
-        borderColor: "#3BAFDA",
-        backgroundColor: "#3BAFDA60",
+        borderColor: "#456882",
+        backgroundColor: "rgba(69,104,130,0.15)",
         borderWidth: 2,
         tension: 0.25,
         yAxisID: "y1",
@@ -84,71 +80,57 @@ export default function RevenueModel() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { labels: { color: "#ddd" } },
+      legend: {
+        labels: {
+          color: "#1B3C53",
+          font: { size: 12 },
+        },
+      },
     },
     scales: {
       x: {
-        ticks: { color: "#ccc" },
+        ticks: { color: "#1B3C53" },
+        grid: { color: "rgba(27,60,83,0.08)" },
       },
       y1: {
-        type: "linear" as const,
         position: "left" as const,
-        ticks: { color: "#3BAFDA" },
-        grid: { color: "rgba(255,255,255,0.1)" },
+        ticks: { color: "#456882" },
+        grid: { color: "rgba(69,104,130,0.15)" },
       },
       y2: {
-        type: "linear" as const,
         position: "right" as const,
-        ticks: { color: "#E3E3E3" },
+        ticks: { color: "#1B3C53" },
         grid: { display: false },
       },
     },
   };
 
   return (
-    <div className="flex flex-col h-full text-[#E3E3E3]">
-      
-      {/* Header row with title + settings button */}
+    <div className="flex flex-col h-full text-[#1B3C53]">
+      {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xl font-semibold">12 Month Revenue Model</h2>
+        <h2 className="text-xl font-semibold">12-Month Revenue Model</h2>
       </div>
 
       {/* Inputs */}
       <div className="grid grid-cols-2 gap-3 text-sm mb-6">
-        <NumberInput 
-          label="Monthly Ad Spend" 
-          value={adSpend} 
-          onChange={setAdSpend} 
-        />
-        <NumberInput 
-          label="CAC (Cost per Acquisition)" 
-          value={cac} 
-          onChange={setCac} 
-        />
-        <PercentInput 
-          label="Monthly Churn (%)" 
-          value={churn} 
-          onChange={setChurn} 
-        />
-        <NumberInput 
-          label="ARPPU (Revenue per User)" 
-          value={arppu} 
-          onChange={setArppu} 
-        />
+        <NumberInput label="Monthly Ad Spend" value={adSpend} onChange={setAdSpend} />
+        <NumberInput label="CAC (Cost per Acquisition)" value={cac} onChange={setCac} />
+        <PercentInput label="Monthly Churn (%)" value={churn} onChange={setChurn} />
+        <NumberInput label="ARPPU (Revenue per User)" value={arppu} onChange={setArppu} />
       </div>
 
-      {/* KPI Cards */}
+      {/* KPIs */}
       <div className="grid grid-cols-3 gap-3 mb-4">
         <KpiCard label="Subscribers (Month 12)" value={month12.subscribers} />
-        <KpiCard label="MRR (Month 12)" value={month12.mrr} />
-        <KpiCard label="ARR" value={ARR} />
+        <KpiCard label="MRR (Month 12)" value={formatCurrency(month12.mrr)} />
+        <KpiCard label="ARR" value={formatCurrency(ARR)} />
       </div>
 
-      {/* Combined Chart */}
-      <div className="flex-1 bg-[#1E4258]/40 border border-[#456882]/40 rounded-xl p-3">
+      {/* Chart */}
+      <div className="flex-1 bg-[#234C6A]/5 border border-[#456882]/30 rounded-xl p-3">
         <ChartJS type="bar" data={combinedData} options={combinedOptions} />
       </div>
-
     </div>
   );
 }

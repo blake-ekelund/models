@@ -48,8 +48,13 @@ export default function ModelCard({
   return (
     <div
       className="
-        bg-white border border-[#456882]/40 rounded-xl p-6 shadow-md 
-        hover:shadow-lg transition flex flex-col h-full
+        bg-white
+        border border-[#456882]/30
+        rounded-xl
+        p-6
+        flex flex-col h-full
+        shadow-sm hover:shadow-md
+        transition
       "
     >
       {/* HEADER */}
@@ -62,8 +67,9 @@ export default function ModelCard({
           {isNew && (
             <span
               className="
-                text-[#3BAFDA] text-[10px] font-semibold px-2 py-0.5 
-                rounded-full bg-[#3BAFDA]/10
+                text-[10px] font-semibold
+                px-2 py-0.5 rounded-full
+                bg-[#1B3C53]/10 text-[#1B3C53]
               "
             >
               New
@@ -73,8 +79,9 @@ export default function ModelCard({
           {status === "Coming Soon" && (
             <span
               className="
-                text-[#3BAFDA] text-[10px] font-semibold px-2 py-0.5 
-                rounded-full bg-[#3BAFDA]/10
+                text-[10px] font-semibold
+                px-2 py-0.5 rounded-full
+                bg-[#456882]/10 text-[#456882]
               "
             >
               Coming Soon
@@ -84,14 +91,18 @@ export default function ModelCard({
       </div>
 
       {/* DESCRIPTION */}
-      <p className="text-[#456882] text-sm mb-4 leading-relaxed">{desc}</p>
+      <p className="text-[#456882] text-sm mb-4 leading-relaxed">
+        {desc}
+      </p>
 
-      {/* CATEGORY CHIP */}
+      {/* CATEGORY */}
       <div className="mb-4">
         <span
           className="
-            inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 
-            rounded-full bg-[#3BAFDA]/10 text-[#3BAFDA]
+            inline-flex items-center gap-1
+            text-xs font-semibold
+            px-2 py-1 rounded-full
+            bg-[#456882]/10 text-[#456882]
           "
         >
           <Icon size={12} /> {category}
@@ -103,12 +114,15 @@ export default function ModelCard({
         disabled={!isAvailable}
         onClick={isAvailable ? onStart : undefined}
         className={`
-          mt-auto w-full flex items-center justify-center gap-2 py-2 rounded-lg 
-          text-sm font-semibold transition
+          mt-auto w-full
+          flex items-center justify-center
+          gap-2 py-2 rounded-lg
+          text-sm font-semibold
+          transition
           ${
             isAvailable
-              ? "bg-[#3BAFDA] text-white hover:bg-[#3BAFDA]/90"
-              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+              ? "bg-[#234C6A] text-white hover:bg-[#456882]"
+              : "bg-[#456882]/10 text-[#456882]/50 cursor-not-allowed"
           }
         `}
       >
