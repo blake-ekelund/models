@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import AuthCard from "../components/AuthCard";
 
@@ -9,13 +10,14 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
 
   const inputClass =
-    "w-full rounded-lg border border-gray-300 px-4 py-2 text-sm " +
-    "focus:outline-none focus:ring-2 focus:ring-[#ebb700]/60 " +
-    "focus:border-[#ebb700]";
+    "w-full rounded-lg border bg-white px-4 py-2 text-sm " +
+    "border-[#E3E3E3] " +
+    "focus:outline-none focus:ring-2 focus:ring-[#1B3C53]/30 " +
+    "focus:border-[#1B3C53]";
 
   const primaryButton =
-    "w-full rounded-lg bg-[#00338d] py-2.5 text-white font-medium " +
-    "hover:bg-[#002a73] transition";
+    "w-full rounded-lg py-2.5 text-white font-medium transition " +
+    "bg-[#1B3C53] hover:bg-[#234C6A]";
 
   async function sendReset() {
     await supabase.auth.resetPasswordForEmail(email, {
@@ -31,21 +33,57 @@ export default function ForgotPasswordPage() {
     >
       {!sent ? (
         <div className="space-y-4">
-          <input
-            className={inputClass}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-          />
+          <div>
+            <label className="text-sm text-[#456882]">
+              Email
+            </label>
+            <input
+              className={inputClass}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+          </div>
 
           <button onClick={sendReset} className={primaryButton}>
             Send reset link
           </button>
+
+          {/* NAV BACK */}
+          <div className="pt-2 text-center">
+            <Link
+              href="/auth/sign-in"
+              className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
+            >
+              Back to sign in
+            </Link>
+          </div>
         </div>
       ) : (
-        <p className="text-sm text-[#55565a]">
-          Check your email for a reset link.
-        </p>
+        <div className="space-y-4 text-center">
+          <p className="text-sm text-[#456882]">
+            Check your email for a reset link.
+          </p>
+
+          <div className="pt-2">
+            <Link
+              href="/auth/sign-in"
+              className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
+            >
+              Return to sign in
+            </Link>
+          </div>
+
+          <div className="text-sm text-[#456882]">
+            Don’t have an account?{" "}
+            <Link
+              href="/auth/sign-up"
+              className="text-[#234C6A] hover:underline font-medium"
+            >
+              Sign up
+            </Link>
+          </div>
+        </div>
       )}
     </AuthCard>
   );
