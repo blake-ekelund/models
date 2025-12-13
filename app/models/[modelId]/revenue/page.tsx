@@ -1,10 +1,15 @@
 "use client";
 
 import { NumberInput } from "@/app/components/ui/NumberInput";
-import { useSaaSCoreStore } from "@/app/models/engines/saas-core/store";
+import { useModelInstanceStore } from "@/app/models/[modelId]/store/useModelInstanceStore";
 
 export default function RevenuePage() {
-  const { inputs, setInput } = useSaaSCoreStore();
+  const inputs = useModelInstanceStore(
+    (s) => s.history.present
+  );
+  const setInputs = useModelInstanceStore(
+    (s) => s.setInputs
+  );
 
   return (
     <div className="max-w-xl mx-auto p-8 space-y-4">
@@ -15,13 +20,23 @@ export default function RevenuePage() {
       <NumberInput
         label="ARPU"
         value={inputs.arpu}
-        onChange={(v) => setInput("arpu", v)}
+        onChange={(v) =>
+          setInputs({
+            ...inputs,
+            arpu: v,
+          })
+        }
       />
 
       <NumberInput
         label="Gross Margin %"
         value={inputs.grossMarginPct * 100}
-        onChange={(v) => setInput("grossMarginPct", v / 100)}
+        onChange={(v) =>
+          setInputs({
+            ...inputs,
+            grossMarginPct: v / 100,
+          })
+        }
       />
     </div>
   );

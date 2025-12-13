@@ -2,9 +2,9 @@
 
 export default function ConfirmDeleteModal({
   open,
+  modelName,
   onCancel,
   onConfirm,
-  modelName,
 }: {
   open: boolean;
   modelName: string;
@@ -17,11 +17,12 @@ export default function ConfirmDeleteModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-xl p-6 w-full max-w-sm">
         <h3 className="text-lg font-semibold text-[#1B3C53]">
-          Delete model?
+          Permanently delete model?
         </h3>
 
         <p className="text-sm text-[#456882] mt-2">
           This will permanently delete <strong>{modelName}</strong>.
+          This action cannot be undone.
         </p>
 
         <div className="mt-6 flex justify-end gap-3">
@@ -36,7 +37,7 @@ export default function ConfirmDeleteModal({
             onClick={onConfirm}
             className="px-3 py-2 text-sm rounded-md bg-red-600 text-white"
           >
-            Delete
+            Delete permanently
           </button>
         </div>
       </div>

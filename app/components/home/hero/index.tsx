@@ -46,7 +46,7 @@ export default function Home() {
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "rgba(245, 245, 245, 0.6)";
+      ctx.fillStyle = "#f5f5f599";
 
       for (const p of particles) {
         p.x += p.vx;
@@ -60,7 +60,7 @@ export default function Home() {
         ctx.fill();
       }
 
-      ctx.strokeStyle = "rgba(55, 181, 240, 0.56)";
+      ctx.strokeStyle = "#37b5f08f";
       ctx.lineWidth = 1;
 
       for (let i = 0; i < POINTS; i++) {
