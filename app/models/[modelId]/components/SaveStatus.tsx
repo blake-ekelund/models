@@ -1,6 +1,6 @@
 "use client";
 
-import { useModelInstanceStore } from "../store/useModelInstanceStore";
+import { useModelInstanceStore } from "./useModelInstanceStore";
 
 export default function SaveStatus() {
   const dirty = useModelInstanceStore((s) => s.dirty);

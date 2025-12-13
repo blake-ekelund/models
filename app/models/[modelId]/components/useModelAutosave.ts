@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useModelInstanceStore } from "./store/useModelInstanceStore";
+import { useModelInstanceStore } from "./useModelInstanceStore";
 
 export function useModelAutosave(modelId: string) {
   const inputs = useModelInstanceStore((s) => s.history.present);

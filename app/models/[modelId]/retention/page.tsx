@@ -1,7 +1,7 @@
 "use client";
 
 import { NumberInput } from "@/app/components/ui/NumberInput";
-import { useModelInstanceStore } from "@/app/models/[modelId]/store/useModelInstanceStore";
+import { useModelInstanceStore } from "@/app/models/[modelId]/components/useModelInstanceStore";
 
 export default function RetentionPage() {
   const inputs = useModelInstanceStore(
