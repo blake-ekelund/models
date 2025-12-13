@@ -10,15 +10,13 @@ export default function NavBar() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   // ---------------------------------------------------
-  // KEEP AUTH STATE IN SYNC (important)
+  // KEEP AUTH STATE IN SYNC
   // ---------------------------------------------------
   useEffect(() => {
-    // Initial check
     supabase.auth.getSession().then(({ data }) => {
       setSignedIn(!!data.session);
     });
 
-    // Subscribe to auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -31,29 +29,20 @@ export default function NavBar() {
   }, []);
 
   // ---------------------------------------------------
-  // PROPER SIGN OUT (client + server)
+  // PROPER SIGN OUT
   // ---------------------------------------------------
   async function signOut() {
-    // 1. Clear client-side Supabase session (memory)
     await supabase.auth.signOut();
-
-    // 2. Clear server-side cookies
     await fetch("/auth/sign-out", { method: "POST" });
-
-    // 3. Hard redirect to reset app state
     window.location.replace("/auth/sign-in?loggedOut=true");
   }
 
   return (
     <header className="fixed top-0 left-0 w-full z-[9998] bg-white border-b border-gray-200 shadow-sm">
-      <nav className="max-w-6xl mx-auto px-0 py-4 flex items-center justify-between">
+      <nav className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* LOGO */}
         <Link
           href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "auto" });
-          }}
           className="text-xl font-bold text-[#1B3C53] tracking-tight"
         >
           Synario
@@ -169,4 +158,3 @@ export default function NavBar() {
     </header>
   );
 }
-
