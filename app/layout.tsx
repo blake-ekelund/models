@@ -3,7 +3,7 @@ import "./globals.css";
 import NavbarGate from "@/app/components/NavbarGate";
 
 export const metadata: Metadata = {
-  title: "A Financial Modeling Engine",
+  title: "A financial engine for small teams.",
   description: "Model revenue, cost structure, and financial outcomes in seconds.",
 };
 

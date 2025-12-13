@@ -43,7 +43,7 @@ export default function HomePage() {
         )}
       </Modal>
 
-      {/* PAGE ROOT — owns navbar offset + dark world */}
+      {/* PAGE ROOT */}
       <div className="relative w-full min-h-screen bg-[#1B3C53] text-white pt-[72px]">
         {/* HERO */}
         <motion.div
@@ -56,7 +56,7 @@ export default function HomePage() {
           <Hero />
         </motion.div>
 
-        {/* WHITE WORLD — visually nested into hero */}
+        {/* WHITE WORLD */}
         <div
           className="
             relative w-full
@@ -101,13 +101,23 @@ export default function HomePage() {
             <Pricing />
           </motion.section>
 
-          {/* ABOUT — micro trust section */}
+          {/* PRICING PHILOSOPHY FAQ */}
+          <motion.section
+            id="faq"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+            className="scroll-mt-[96px] mt-16"
+          >
+          </motion.section>
+
+          {/* ABOUT */}
           <motion.section
             id="about"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7 }}
-            className="scroll-mt-[96px] mt-12"
+            className="scroll-mt-[96px] mt-16"
           >
             <About />
           </motion.section>

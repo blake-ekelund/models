@@ -152,7 +152,7 @@ export default function Home() {
                   w-full sm:w-auto
                 "
               >
-                Explore Other Tools
+                Explore Our Models
               </Link>
             </div>
           </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
 import Link from "next/link";
 
 export default function PricingPage() {
@@ -13,158 +12,159 @@ export default function PricingPage() {
         transition={{ duration: 0.4 }}
         className="max-w-6xl mx-auto px-6"
       >
-        {/* HEADER — LEFT ALIGNED */}
-        <div className="max-w-3xl mb-12">
+        {/* HEADER */}
+        <div className="max-w-3xl mb-16">
           <h1 className="text-4xl font-bold mb-4">
-            One Plan. Built for Founders.
+            Simple pricing for small teams
           </h1>
           <p className="text-[#456882] text-lg">
-            Synario gives you clear financial models, honest assumptions,
-            and a community-driven roadmap — without pricing games.
+            Synario is a financial engine for small teams who want clarity,
+            not complexity.
           </p>
         </div>
 
-        {/* PRICING CARD — CENTERED DECISION OBJECT */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-xl">
-            <div className="border border-[#456882]/30 rounded-2xl p-8 mb-10">
+        {/* PRICING CARD */}
+        <div className="flex justify-center mb-20">
+          <div className="w-full max-w-md">
+            <div className="border border-[#456882]/30 rounded-2xl p-6">
+              {/* PLAN NAME */}
+              <div className="text-sm font-medium text-[#456882] mb-2">
+                Standard
+              </div>
+
               {/* PRICE */}
-              <div className="flex items-end gap-3 mb-6">
-                <div className="text-5xl font-bold">$20</div>
-                <div className="text-[#456882] text-base mb-1">
-                  per month
+              <div className="flex items-end gap-2 mb-4">
+                <div className="text-4xl font-bold">$20</div>
+                <div className="text-[#456882] text-sm mb-1">
+                  / month
                 </div>
               </div>
 
-              <p className="text-[#456882] mb-8 max-w-lg">
-                Full access to everything we build — now and in the future.
-                No tiers. No usage limits.
+              {/* VALUE */}
+              <p className="text-[#456882] text-sm mb-4">
+                Everything you need to model revenue, cash flow, and decisions —
+                without pricing games.
               </p>
 
-              {/* BENEFITS */}
-              <div className="space-y-8 text-sm">
-                {/* MODELING */}
-                <div>
-                  <h3 className="text-base font-semibold mb-3">
-                    Modeling
-                  </h3>
-                  <ul className="space-y-2">
-                    {[
-                      "Clear, explicit assumptions in every model",
-                      "Live updates as you adjust inputs",
-                      "Revenue, cash flow, pricing, and planning models",
-                      "Base / Bear / Bull scenario switching",
-                      "Export results to Excel or PDF",
-                      "New models shipped regularly",
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <Check
-                          size={16}
-                          className="text-[#456882] mt-0.5"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* COMMUNITY */}
-                <div>
-                  <h3 className="text-base font-semibold mb-3">
-                    Community
-                  </h3>
-                  <ul className="space-y-2">
-                    {[
-                      "Request new models based on real needs",
-                      "Vote on what we build next",
-                      "Public roadmap shaped by founders, not sales demos",
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <Check
-                          size={16}
-                          className="text-[#456882] mt-0.5"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* SUPPORT */}
-                <div>
-                  <h3 className="text-base font-semibold mb-3">
-                    Support
-                  </h3>
-                  <ul className="space-y-2">
-                    {[
-                      "Email support with a 24-hour response target",
-                      "Weekly tutorial videos and walkthroughs",
-                      "Live office hours (first-come, first-served)",
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <Check
-                          size={16}
-                          className="text-[#456882] mt-0.5"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* PHILOSOPHY */}
-                <div>
-                  <h3 className="text-base font-semibold mb-3">
-                    Founder-First Pricing
-                  </h3>
-                  <ul className="space-y-2">
-                    {[
-                      "No seat-based pricing",
-                      "No feature gating",
-                      "No penalties for being small",
-                      "Automatic cancellation after 3 months of inactivity",
-                      "Your data is archived for a full year — nothing is lost if you return",
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <Check
-                          size={16}
-                          className="text-[#456882] mt-0.5"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              {/* CORE INCLUSIONS */}
+              <ul className="space-y-2 text-sm text-[#456882] mb-6">
+                <li>• Unlimited financial models</li>
+                <li>• Live scenario updates (Base / Bear / Bull)</li>
+                <li>• Export to Excel and PDF</li>
+                <li>• Community requests & voting</li>
+              </ul>
 
               {/* CTA */}
-              <div className="mt-10">
+              <Link
+                href="/auth/sign-up"
+                className="
+                  block w-full text-center
+                  px-4 py-2.5 rounded-lg
+                  text-sm font-semibold
+                  bg-[#234C6A] text-white
+                  hover:bg-[#456882]
+                  transition
+                "
+              >
+                Start using Synario
+              </Link>
+
+              {/* SECONDARY CTA */}
+              <div className="mt-3 text-center">
                 <Link
-                  href="/auth/sign-up"
-                  className="
-                    inline-flex items-center justify-center
-                    px-6 py-3 rounded-lg
-                    text-sm font-semibold
-                    bg-[#234C6A] text-white
-                    hover:bg-[#456882]
-                    transition
-                  "
+                  href="/#about"
+                  className="text-xs text-[#456882] hover:text-[#1B3C53] transition"
                 >
-                  Start Using Synario
+                  Pricing philosophy →
                 </Link>
               </div>
             </div>
           </div>
         </div>
 
-        {/* FOOTNOTE — LEFT ALIGNED */}
-        <div className="max-w-3xl">
+        {/* PRODUCT SNAPSHOT */}
+        <section className="max-w-4xl mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+            <Snapshot
+              title="What it is"
+              body="A financial modeling workspace for revenue, cash flow, and planning."
+            />
+            <Snapshot
+              title="Who it’s for"
+              body="Founders and small teams making real financial decisions."
+            />
+          </div>
+        </section>
+
+        {/* FEATURE DETAIL */}
+        <section className="max-w-4xl space-y-10 text-sm">
+          <FeatureBlock
+            title="Modeling"
+            items={[
+              "Clear, explicit assumptions in every model",
+              "Live updates as inputs change",
+              "Revenue, cash flow, pricing, and planning models",
+              "Scenarios designed for thinking, not prediction",
+            ]}
+          />
+
+          <FeatureBlock
+            title="Support & community"
+            items={[
+              "Request new models based on real needs",
+              "Vote on what we build next",
+              "Email support with a 24-hour response target",
+              "Weekly walkthroughs and office hours",
+            ]}
+          />
+        </section>
+
+        {/* FOOTNOTE */}
+        <div className="max-w-3xl mt-16">
           <p className="text-xs text-[#456882]">
             If Synario doesn’t help you understand your numbers or make better
-            decisions, you shouldn’t pay for it. That’s the deal.
+            decisions, you shouldn’t pay for it.
           </p>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+/* -----------------------------
+   Supporting components
+------------------------------ */
+
+function Snapshot({
+  title,
+  body,
+}: {
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="border border-[#456882]/30 rounded-xl p-4">
+      <div className="font-semibold mb-1">{title}</div>
+      <div className="text-[#456882]">{body}</div>
+    </div>
+  );
+}
+
+function FeatureBlock({
+  title,
+  items,
+}: {
+  title: string;
+  items: string[];
+}) {
+  return (
+    <div>
+      <h3 className="text-base font-semibold mb-3">{title}</h3>
+      <ul className="space-y-2 text-[#456882]">
+        {items.map((item) => (
+          <li key={item}>• {item}</li>
+        ))}
+      </ul>
     </div>
   );
 }
