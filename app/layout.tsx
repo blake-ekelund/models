@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavbarGate from "@/app/components/NavbarGate";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "A financial engine for small teams.",
@@ -21,6 +23,8 @@ export default function RootLayout({
         {/* PAGE CONTENT */}
         <main className="relative">
           {children}
+          <Analytics />
+          <SpeedInsights />
         </main>
       </body>
     </html>
