@@ -16,10 +16,11 @@ ChartJS.register(...registerables);
 
 interface RevenueModelProps {
   onExportReady?: (fn: () => void) => void;
+  onExportStateChange?: (isExporting: boolean) => void;
 }
 
 /* ---------------------------------------------
-   Formatting helpers (LOCKED + NULL SAFE)
+   Formatting helpers
 --------------------------------------------- */
 function formatCurrency(n: number | null | undefined) {
   const safe = n ?? 0;
@@ -31,11 +32,15 @@ function formatInteger(n: number | null | undefined) {
   return Math.round(safe).toLocaleString();
 }
 
-export default function RevenueModel({ onExportReady }: RevenueModelProps) {
-  const [adSpend, setAdSpend] = useState(5000);
+export default function RevenueModel({
+  onExportReady,
+  onExportStateChange,
+}: RevenueModelProps) {  const [adSpend, setAdSpend] = useState(5000);
   const [cac, setCac] = useState(100);
   const [churn, setChurn] = useState(5);
   const [arppu, setArppu] = useState(20);
+
+  const [isExporting, setIsExporting] = useState(false);
 
   /* ---------------------------------------------
      Month labels
@@ -49,7 +54,7 @@ export default function RevenueModel({ onExportReady }: RevenueModelProps) {
   }, []);
 
   /* ---------------------------------------------
-     Model (precision preserved – UI only)
+     Model (UI only)
   --------------------------------------------- */
   const model = useMemo(() => {
     const churnRate = churn / 100;
@@ -61,7 +66,6 @@ export default function RevenueModel({ onExportReady }: RevenueModelProps) {
       if (i > 0) {
         subscribers = subscribers * (1 - churnRate) + acquired;
       }
-
       return {
         subscribers,
         mrr: subscribers * arppu,
@@ -73,42 +77,62 @@ export default function RevenueModel({ onExportReady }: RevenueModelProps) {
   const ARR = month12.mrr * 12;
 
   /* ---------------------------------------------
-     EXPORT HANDLER (SERVER TEMPLATE)
+     EXPORT HANDLER (with loading state)
   --------------------------------------------- */
   const handleExport = useCallback(async () => {
-    const res = await fetch("/api/export/revenue", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        anonId: getAnonId(),
-        inputs: {
-          adSpend,
-          cac,
-          churnPct: churn,
-          arppu,
-        },
-      }),
-    });
+    if (isExporting) return;
 
-    if (!res.ok) {
-      console.error("Revenue export failed");
-      return;
+    try {
+      setIsExporting(true);
+      onExportStateChange?.(true);
+
+      const res = await fetch("/api/export/revenue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          anonId: getAnonId(),
+          inputs: {
+            adSpend,
+            cac,
+            churnPct: churn,
+            arppu,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Export failed");
+      }
+
+      const { downloadUrl } = await res.json();
+
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = "12-month_revenue_model.xlsx";
+      a.click();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsExporting(false);
+      onExportStateChange?.(false);
     }
-
-    const { downloadUrl } = await res.json();
-
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = "12-month_revenue_model.xlsx";
-    a.click();
-  }, [adSpend, cac, churn, arppu]);
+  }, [
+    adSpend,
+    cac,
+    churn,
+    arppu,
+    isExporting,
+    onExportStateChange,
+  ]);
 
   /* ---------------------------------------------
      EXPOSE EXPORT TO PARENT
   --------------------------------------------- */
   useEffect(() => {
-    onExportReady?.(() => handleExport);
-  }, [handleExport, onExportReady]);
+    if (!onExportReady) return;
+    onExportReady(() => handleExport);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* ---------------------------------------------
      Chart data
@@ -152,50 +176,25 @@ export default function RevenueModel({ onExportReady }: RevenueModelProps) {
           font: { size: 12, weight: 500 },
         },
       },
-      tooltip: {
-        callbacks: {
-          label(ctx) {
-            const label = ctx.dataset.label ?? "";
-            const value = ctx.parsed.y;
-
-            return ctx.dataset.yAxisID === "y1"
-              ? `${label}: ${formatInteger(value)}`
-              : `${label}: ${formatCurrency(value)}`;
-          },
-        },
-      },
     },
     scales: {
       x: {
-        ticks: {
-          color: "#456882",
-          font: { size: 11, weight: 500 },
-        },
-        grid: {
-          color: "rgba(35,76,106,0.08)",
-        },
+        ticks: { color: "#456882", font: { size: 11, weight: 500 } },
       },
       y1: {
         position: "left",
         ticks: {
           color: "#456882",
-          callback: (v) => formatInteger(v as number | null),
-          font: { size: 11, weight: 500 },
-        },
-        grid: {
-          color: "rgba(35,76,106,0.12)",
+          callback: (v) => formatInteger(v as number),
         },
       },
       y2: {
         position: "right",
         ticks: {
           color: "#1B3C53",
-          callback: (v) => formatCurrency(v as number | null),
-          font: { size: 11, weight: 500 },
+          callback: (v) => formatCurrency(v as number),
         },
-        grid: {
-          display: false,
-        },
+        grid: { display: false },
       },
     },
   };
@@ -205,15 +204,15 @@ export default function RevenueModel({ onExportReady }: RevenueModelProps) {
   --------------------------------------------- */
   return (
     <div className="flex flex-col h-full text-[#1B3C53]">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-semibold">12-Month Revenue Model</h2>
-      </div>
+      <h2 className="text-xl font-semibold mb-2">
+        12-Month Revenue Model
+      </h2>
 
       <div className="grid grid-cols-2 gap-3 text-sm mb-4">
         <NumberInput label="Monthly Ad Spend" value={adSpend} onChange={setAdSpend} />
         <NumberInput label="CAC (Cost per Acquisition)" value={cac} onChange={setCac} />
         <PercentInput label="Monthly Churn (%)" value={churn} onChange={setChurn} />
-        <NumberInput label="ARPPU (Revenue per User)" value={arppu} onChange={setArppu} />
+        <NumberInput label="ARPPU (Revenue Per User)" value={arppu} onChange={setArppu} />
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-2">
@@ -222,7 +221,11 @@ export default function RevenueModel({ onExportReady }: RevenueModelProps) {
         <KpiCard label="ARR" value={formatCurrency(ARR)} />
       </div>
 
-      <div className="flex-1 bg-[#E3E3E3]/40 p-1">
+      <div
+        className={`flex-1 bg-[#E3E3E3]/40 p-1 ${
+          isExporting ? "opacity-75 pointer-events-none" : ""
+        }`}
+      >
         <ChartJSComponent type="bar" data={combinedData} options={combinedOptions} />
       </div>
     </div>

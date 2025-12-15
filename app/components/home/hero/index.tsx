@@ -15,6 +15,7 @@ type ModelKey = "Revenue Model" | "Cash Flow Model" | "Explore More";
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const modelRef = useRef<HTMLDivElement | null>(null);
+  const hasMountedRef = useRef(false);
 
   const models: ModelKey[] = [
     "Revenue Model",
@@ -24,12 +25,29 @@ export default function Home() {
 
   const [activeModel, setActiveModel] = useState<ModelKey>("Revenue Model");
 
-  // 🔑 export handlers captured from models
+  // 🔑 export handlers + state from models
   const [revenueExportFn, setRevenueExportFn] =
     useState<null | (() => void)>(null);
+  const [revenueIsExporting, setRevenueIsExporting] = useState(false);
 
   const [cashFlowExportFn, setCashFlowExportFn] =
     useState<null | (() => void)>(null);
+  const [cashFlowIsExporting, setCashFlowIsExporting] = useState(false);
+
+  /* -------------------------------------
+    RESET EXPORT STATE ON MODEL CHANGE
+  -------------------------------------- */
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+
+    setRevenueExportFn(null);
+    setCashFlowExportFn(null);
+    setRevenueIsExporting(false);
+    setCashFlowIsExporting(false);
+  }, [activeModel]);
 
   /* -------------------------------------
      MODEL CAPABILITIES
@@ -128,6 +146,13 @@ export default function Home() {
       ? cashFlowExportFn
       : null;
 
+  const isExporting =
+    activeModel === "Revenue Model"
+      ? revenueIsExporting
+      : activeModel === "Cash Flow Model"
+      ? cashFlowIsExporting
+      : false;
+
   /* -------------------------------------
      PAGE
   -------------------------------------- */
@@ -198,20 +223,27 @@ export default function Home() {
               models={models}
               activeModel={activeModel}
               onChange={setActiveModel}
-              onExport={canExport ? exportHandler ?? undefined : undefined}
+              onExport={canExport ? exportHandler ?? null : null}
               onSettings={
                 canSettings
                   ? () => console.log(`Open settings for ${activeModel}`)
                   : undefined
               }
+              isExporting={isExporting}
             />
 
             {activeModel === "Revenue Model" && (
-              <RevenueModel onExportReady={setRevenueExportFn} />
+              <RevenueModel
+                onExportReady={setRevenueExportFn}
+                onExportStateChange={setRevenueIsExporting}
+              />
             )}
 
             {activeModel === "Cash Flow Model" && (
-              <CashFlowMini onExportReady={setCashFlowExportFn} />
+              <CashFlowMini
+                onExportReady={setCashFlowExportFn}
+                onExportStateChange={setCashFlowIsExporting}
+              />
             )}
 
             {activeModel === "Explore More" && <ExploreMoreModels />}

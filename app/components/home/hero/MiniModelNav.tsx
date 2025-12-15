@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Settings } from "lucide-react";
+import { Download, Settings, RefreshCw } from "lucide-react";
 
 export type ModelKey = "Revenue Model" | "Cash Flow Model" | "Explore More";
 
@@ -9,62 +9,72 @@ interface MiniModelNavProps {
   activeModel: ModelKey;
   onChange: (model: ModelKey) => void;
 
-  onExport?: () => void;
+  onExport?: (() => void) | null;
   onSettings?: () => void;
+  isExporting?: boolean;
 }
+
 
 function IconAction({
   onClick,
   label,
   tooltip,
   children,
+  disabled,
 }: {
   onClick: () => void;
   label: string;
   tooltip: string;
   children: React.ReactNode;
+  disabled?: boolean;
 }) {
   return (
     <div className="relative group">
       <button
         onClick={onClick}
+        disabled={disabled}
         aria-label={label}
-        className="
+        className={`
           w-9 h-9 flex items-center justify-center
           rounded-full border border-[#456882]/40
           text-[#1B3C53]
-          hover:bg-[#1B3C53]/5
-          focus:outline-none focus:ring-2 focus:ring-[#456882]/40
           transition
-        "
+          focus:outline-none focus:ring-2 focus:ring-[#456882]/40
+          ${
+            disabled
+              ? "opacity-60 cursor-wait"
+              : "hover:bg-[#1B3C53]/5"
+          }
+        `}
       >
         {children}
       </button>
 
-      {/* Tooltip (hover only) */}
-      <div
-        className="
-          absolute right-0 top-11
-          opacity-0 group-hover:opacity-100
-          pointer-events-none
-          transition
-        "
-      >
+      {/* Tooltip (hover only, hidden while disabled) */}
+      {!disabled && (
         <div
           className="
-            bg-[#1B3C53]
-            text-white text-xs
-            px-3 py-1.5
-            rounded-lg shadow whitespace-nowrap
+            absolute right-0 top-11
+            opacity-0 group-hover:opacity-100
+            pointer-events-none
+            transition
           "
         >
-          {tooltip}
+          <div
+            className="
+              bg-[#1B3C53]
+              text-white text-xs
+              px-3 py-1.5
+              rounded-lg shadow whitespace-nowrap
+            "
+          >
+            {tooltip}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
-
 
 export default function MiniModelNav({
   models,
@@ -72,6 +82,7 @@ export default function MiniModelNav({
   onChange,
   onExport,
   onSettings,
+  isExporting = false,
 }: MiniModelNavProps) {
   return (
     <div className="flex items-center justify-between mb-4">
@@ -103,13 +114,25 @@ export default function MiniModelNav({
       {/* RIGHT ACTIONS */}
       <div className="flex items-center gap-2">
         {onExport && (
-          <IconAction
-            onClick={onExport}
-            label="Export to Excel"
-            tooltip="Export to Excel"
-          >
+        <IconAction
+          onClick={onExport ?? (() => {})}
+          disabled={!onExport || isExporting}
+          label="Export to Excel"
+          tooltip={
+            !onExport
+              ? "Preparing export…"
+              : isExporting
+              ? "Preparing Excel…"
+              : "Export to Excel"
+          }
+        >
+          {isExporting ? (
+            <RefreshCw size={18} className="animate-spin" />
+          ) : (
             <Download size={18} />
-          </IconAction>
+          )}
+        </IconAction>
+
         )}
 
         {onSettings && (
