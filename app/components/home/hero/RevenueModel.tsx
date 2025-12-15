@@ -1,16 +1,25 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react";
+
 import { NumberInput } from "@/app/components/ui/NumberInput";
 import { PercentInput } from "@/app/components/ui/PercentInput";
+import KpiCard from "@/app/components/ui/KpiCard";
+import { getAnonId } from "@/lib/anon";
+
 import { Chart as ChartJSComponent } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   registerables,
   type ChartOptions,
 } from "chart.js";
-import KpiCard from "@/app/components/ui/KpiCard";
-import { getAnonId } from "@/lib/anon";
 
 ChartJS.register(...registerables);
 
@@ -35,12 +44,18 @@ function formatInteger(n: number | null | undefined) {
 export default function RevenueModel({
   onExportReady,
   onExportStateChange,
-}: RevenueModelProps) {  const [adSpend, setAdSpend] = useState(5000);
+}: RevenueModelProps) {
+  const [adSpend, setAdSpend] = useState(5000);
   const [cac, setCac] = useState(100);
   const [churn, setChurn] = useState(5);
   const [arppu, setArppu] = useState(20);
 
   const [isExporting, setIsExporting] = useState(false);
+
+  /* ---------------------------------------------
+     Chart ref (for resize)
+  --------------------------------------------- */
+  const chartRef = useRef<any>(null);
 
   /* ---------------------------------------------
      Month labels
@@ -54,7 +69,7 @@ export default function RevenueModel({
   }, []);
 
   /* ---------------------------------------------
-     Model (UI only)
+     Model
   --------------------------------------------- */
   const model = useMemo(() => {
     const churnRate = churn / 100;
@@ -77,7 +92,7 @@ export default function RevenueModel({
   const ARR = month12.mrr * 12;
 
   /* ---------------------------------------------
-     EXPORT HANDLER (with loading state)
+     EXPORT HANDLER
   --------------------------------------------- */
   const handleExport = useCallback(async () => {
     if (isExporting) return;
@@ -100,16 +115,12 @@ export default function RevenueModel({
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Export failed");
-      }
+      if (!res.ok) throw new Error("Export failed");
 
       const { downloadUrl } = await res.json();
 
-      const a = document.createElement("a");
-      a.href = downloadUrl;
-      a.download = "12-month_revenue_model.xlsx";
-      a.click();
+      // More reliable than a.click() in production
+      window.location.href = downloadUrl;
     } catch (err) {
       console.error(err);
     } finally {
@@ -126,12 +137,23 @@ export default function RevenueModel({
   ]);
 
   /* ---------------------------------------------
-     EXPOSE EXPORT TO PARENT
+     Expose export handler
   --------------------------------------------- */
   useEffect(() => {
     if (!onExportReady) return;
     onExportReady(() => handleExport);
   }, [handleExport, onExportReady]);
+
+  /* ---------------------------------------------
+     Force chart resize after layout settles
+  --------------------------------------------- */
+  useLayoutEffect(() => {
+    if (!chartRef.current) return;
+
+    requestAnimationFrame(() => {
+      chartRef.current.resize();
+    });
+  }, []);
 
   /* ---------------------------------------------
      Chart data
@@ -225,7 +247,12 @@ export default function RevenueModel({
           isExporting ? "opacity-75 pointer-events-none" : ""
         }`}
       >
-        <ChartJSComponent type="bar" data={combinedData} options={combinedOptions} />
+        <ChartJSComponent
+          ref={chartRef}
+          type="bar"
+          data={combinedData}
+          options={combinedOptions}
+        />
       </div>
     </div>
   );
