@@ -217,7 +217,7 @@ export default function Home() {
             />
 
             {/* MODELS (ALWAYS MOUNTED) */}
-            <div className="relative h-full min-h-[500px]">
+            <div className="relative h-full">
               <div
                 className={
                   activeModel === "Revenue Model"
