@@ -217,7 +217,7 @@ export default function Home() {
             />
 
             {/* MODELS (ALWAYS MOUNTED) */}
-            <div className="relative h-full">
+            <div className="relative h-full min-h-[500px]">
               <div
                 className={
                   activeModel === "Revenue Model"
@@ -245,9 +245,16 @@ export default function Home() {
               </div>
             </div>
 
-            <div className={activeModel === "Explore More" ? "block" : "hidden"}>
+            <div
+              className={
+                activeModel === "Explore More"
+                  ? "relative opacity-100 pointer-events-auto"
+                  : "absolute inset-0 opacity-0 pointer-events-none"
+              }
+            >
               <ExploreMoreModels />
             </div>
+
           </MiniModelContainer>
         </motion.div>
       </div>
