@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import fs from "fs/promises";
