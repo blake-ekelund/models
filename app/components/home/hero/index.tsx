@@ -15,7 +15,6 @@ type ModelKey = "Revenue Model" | "Cash Flow Model" | "Explore More";
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const modelRef = useRef<HTMLDivElement | null>(null);
-  const hasMountedRef = useRef(false);
 
   const models: ModelKey[] = [
     "Revenue Model",
@@ -25,7 +24,7 @@ export default function Home() {
 
   const [activeModel, setActiveModel] = useState<ModelKey>("Revenue Model");
 
-  // 🔑 export handlers + state from models
+  // Export handlers registered by models (persist for lifetime)
   const [revenueExportFn, setRevenueExportFn] =
     useState<null | (() => void)>(null);
   const [revenueIsExporting, setRevenueIsExporting] = useState(false);
@@ -33,21 +32,6 @@ export default function Home() {
   const [cashFlowExportFn, setCashFlowExportFn] =
     useState<null | (() => void)>(null);
   const [cashFlowIsExporting, setCashFlowIsExporting] = useState(false);
-
-  /* -------------------------------------
-    RESET EXPORT STATE ON MODEL CHANGE
-  -------------------------------------- */
-  useEffect(() => {
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true;
-      return;
-    }
-
-    setRevenueExportFn(null);
-    setCashFlowExportFn(null);
-    setRevenueIsExporting(false);
-    setCashFlowIsExporting(false);
-  }, [activeModel]);
 
   /* -------------------------------------
      MODEL CAPABILITIES
@@ -63,6 +47,23 @@ export default function Home() {
 
   const { export: canExport, settings: canSettings } =
     MODEL_CAPABILITIES[activeModel];
+
+  /* -------------------------------------
+     EXPORT ROUTING (PURE DERIVATION)
+  -------------------------------------- */
+  const exportHandler =
+    activeModel === "Revenue Model"
+      ? revenueExportFn
+      : activeModel === "Cash Flow Model"
+      ? cashFlowExportFn
+      : null;
+
+  const isExporting =
+    activeModel === "Revenue Model"
+      ? revenueIsExporting
+      : activeModel === "Cash Flow Model"
+      ? cashFlowIsExporting
+      : false;
 
   /* -------------------------------------
      BACKGROUND PARTICLES
@@ -137,23 +138,6 @@ export default function Home() {
   }, []);
 
   /* -------------------------------------
-     EXPORT ROUTING
-  -------------------------------------- */
-  const exportHandler =
-    activeModel === "Revenue Model"
-      ? revenueExportFn
-      : activeModel === "Cash Flow Model"
-      ? cashFlowExportFn
-      : null;
-
-  const isExporting =
-    activeModel === "Revenue Model"
-      ? revenueIsExporting
-      : activeModel === "Cash Flow Model"
-      ? cashFlowIsExporting
-      : false;
-
-  /* -------------------------------------
      PAGE
   -------------------------------------- */
   return (
@@ -223,7 +207,7 @@ export default function Home() {
               models={models}
               activeModel={activeModel}
               onChange={setActiveModel}
-              onExport={canExport ? exportHandler ?? null : null}
+              onExport={canExport ? exportHandler : null}
               onSettings={
                 canSettings
                   ? () => console.log(`Open settings for ${activeModel}`)
@@ -232,21 +216,24 @@ export default function Home() {
               isExporting={isExporting}
             />
 
-            {activeModel === "Revenue Model" && (
+            {/* MODELS (ALWAYS MOUNTED) */}
+            <div className={activeModel === "Revenue Model" ? "block" : "hidden"}>
               <RevenueModel
                 onExportReady={setRevenueExportFn}
                 onExportStateChange={setRevenueIsExporting}
               />
-            )}
+            </div>
 
-            {activeModel === "Cash Flow Model" && (
+            <div className={activeModel === "Cash Flow Model" ? "block" : "hidden"}>
               <CashFlowMini
                 onExportReady={setCashFlowExportFn}
                 onExportStateChange={setCashFlowIsExporting}
               />
-            )}
+            </div>
 
-            {activeModel === "Explore More" && <ExploreMoreModels />}
+            <div className={activeModel === "Explore More" ? "block" : "hidden"}>
+              <ExploreMoreModels />
+            </div>
           </MiniModelContainer>
         </motion.div>
       </div>
