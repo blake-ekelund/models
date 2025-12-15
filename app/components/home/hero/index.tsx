@@ -243,16 +243,16 @@ export default function Home() {
                   onExportStateChange={setCashFlowIsExporting}
                 />
               </div>
-            </div>
 
-            <div
-              className={
-                activeModel === "Explore More"
-                  ? "relative opacity-100 pointer-events-auto"
-                  : "absolute inset-0 opacity-0 pointer-events-none"
-              }
-            >
-              <ExploreMoreModels />
+              <div
+                className={
+                  activeModel === "Explore More"
+                    ? "relative opacity-100 pointer-events-auto"
+                    : "absolute inset-0 opacity-0 pointer-events-none"
+                }
+              >
+                <ExploreMoreModels />
+              </div>
             </div>
 
           </MiniModelContainer>
