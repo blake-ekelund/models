@@ -9,12 +9,14 @@ import MiniModelContainer from "./MiniModelContainer";
 import CashFlowMini from "./CashFlowMini";
 import RevenueModel from "./RevenueModel";
 import ExploreMoreModels from "./ExploreMoreModels";
+import { supabase } from "@/lib/supabaseClient";
 
 type ModelKey = "Revenue Model" | "Cash Flow Model" | "Explore More";
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const modelRef = useRef<HTMLDivElement | null>(null);
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
 
   const models: ModelKey[] = [
     "Revenue Model",
@@ -24,7 +26,7 @@ export default function Home() {
 
   const [activeModel, setActiveModel] = useState<ModelKey>("Revenue Model");
 
-  // Export handlers registered by models (persist for lifetime)
+  // Export handlers
   const [revenueExportFn, setRevenueExportFn] =
     useState<null | (() => void)>(null);
   const [revenueIsExporting, setRevenueIsExporting] = useState(false);
@@ -32,6 +34,15 @@ export default function Home() {
   const [cashFlowExportFn, setCashFlowExportFn] =
     useState<null | (() => void)>(null);
   const [cashFlowIsExporting, setCashFlowIsExporting] = useState(false);
+
+  /* -------------------------------------
+     Resolve auth state once
+  -------------------------------------- */
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setIsAuthed(!!data.session);
+    });
+  }, []);
 
   /* -------------------------------------
      MODEL CAPABILITIES
@@ -49,7 +60,7 @@ export default function Home() {
     MODEL_CAPABILITIES[activeModel];
 
   /* -------------------------------------
-     EXPORT ROUTING (PURE DERIVATION)
+     EXPORT ROUTING
   -------------------------------------- */
   const exportHandler =
     activeModel === "Revenue Model"
@@ -171,17 +182,19 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
-              <Link
-                href="/"
-                className="
-                  px-6 py-3 rounded-full text-lg font-semibold
-                  bg-[#E3E3E3] text-[#1B3C53]
-                  shadow hover:scale-[1.03] transition
-                  w-full sm:w-auto
-                "
-              >
-                Build a Financial Model
-              </Link>
+              {isAuthed !== null && (
+                <Link
+                  href={isAuthed ? "/models/catalog" : "/auth/sign-up"}
+                  className="
+                    px-6 py-3 rounded-full text-lg font-semibold
+                    bg-[#E3E3E3] text-[#1B3C53]
+                    shadow hover:scale-[1.03] transition
+                    w-full sm:w-auto
+                  "
+                >
+                  Build a Financial Model
+                </Link>
+              )}
 
               <Link
                 href="/#library"
@@ -208,15 +221,10 @@ export default function Home() {
               activeModel={activeModel}
               onChange={setActiveModel}
               onExport={canExport ? exportHandler : null}
-              onSettings={
-                canSettings
-                  ? () => console.log(`Open settings for ${activeModel}`)
-                  : undefined
-              }
               isExporting={isExporting}
             />
 
-            {/* MODELS (ALWAYS MOUNTED) */}
+            {/* MODELS (LAYERED) */}
             <div className="relative h-full">
               <div
                 className={
@@ -254,7 +262,6 @@ export default function Home() {
                 <ExploreMoreModels />
               </div>
             </div>
-
           </MiniModelContainer>
         </motion.div>
       </div>

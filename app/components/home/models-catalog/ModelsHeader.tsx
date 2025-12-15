@@ -58,7 +58,7 @@ export default function CatalogHeader({
 
           {/* View Requests */}
           <button
-            onClick={() => (window.location.href = "/requests")}
+            onClick={() => (window.location.href = "/#requests")}
             className="
               flex items-center gap-2 px-4 py-2 rounded-lg
               text-sm font-medium

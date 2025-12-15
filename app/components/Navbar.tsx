@@ -39,7 +39,7 @@ export default function NavBar() {
 
   const navLinks = [
     ["Library", "#library"],
-    ["Pipeline", "#pipeline"],
+    ["Requests", "#requests"],
     ["Pricing", "#pricing"],
     ["About", "#about"],
   ];

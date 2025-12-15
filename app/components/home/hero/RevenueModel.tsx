@@ -32,7 +32,7 @@ interface RevenueModelProps {
 --------------------------------------------- */
 function formatCurrency(n: number | null | undefined) {
   const safe = n ?? 0;
-  return `$${Math.round(safe).toLocaleString()}`;
+  return `${Math.round(safe).toLocaleString()}`;
 }
 
 function formatInteger(n: number | null | undefined) {
@@ -179,7 +179,7 @@ export default function RevenueModel({
       },
       {
         type: "bar" as const,
-        label: "MRR ($)",
+        label: "MRR",
         data: model.map((m) => Math.round(m.mrr)),
         backgroundColor: "#1B3C53",
         borderRadius: 6,

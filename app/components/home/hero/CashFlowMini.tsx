@@ -26,7 +26,7 @@ interface CashFlowModelProps {
 --------------------------------------------- */
 function formatCurrency(n: number | null | undefined) {
   const safe = n ?? 0;
-  return `$${Math.round(safe).toLocaleString()}`;
+  return `${Math.round(safe).toLocaleString()}`;
 }
 
 export default function CashFlowModel({

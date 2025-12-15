@@ -1,25 +1,89 @@
 "use client";
 
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface RowItem {
-  title: string;
+  id: string;
+  name: string;
   description: string;
-  votes: number;
+  vote_count: number;
 }
 
 interface RowProps {
   item: RowItem;
-  globalIndex: number;
-  vote: (index: number, delta: number) => void;
 }
 
-export default function PipelineRow({ item, globalIndex, vote }: RowProps) {
+export default function PipelineRow({ item }: RowProps) {
+  const [hasVoted, setHasVoted] = useState(false);
+  const [count, setCount] = useState(item.vote_count);
+  const [loading, setLoading] = useState(false);
+
+  /* ---------------------------------------------
+     Check if user already voted
+  --------------------------------------------- */
+  useEffect(() => {
+    async function checkVote() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("model_request_votes")
+        .select("id")
+        .eq("model_request_id", item.id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (data) setHasVoted(true);
+    }
+
+    checkVote();
+  }, [item.id]);
+
+  /* ---------------------------------------------
+     Vote handler
+  --------------------------------------------- */
+  async function vote() {
+    if (loading || hasVoted) return;
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert("Please sign in to vote.");
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase
+      .from("model_request_votes")
+      .insert({
+        model_request_id: item.id,
+        user_id: user.id,
+      });
+
+    if (error) {
+      // unique constraint violation → already voted
+      setHasVoted(true);
+    } else {
+      setHasVoted(true);
+      setCount((c) => c + 1);
+    }
+
+    setLoading(false);
+  }
+
   return (
     <>
       {/* MODEL TITLE */}
       <td className="py-4 px-4 font-medium text-[#1B3C53]">
-        {item.title}
+        {item.name}
       </td>
 
       {/* DESCRIPTION */}
@@ -27,10 +91,9 @@ export default function PipelineRow({ item, globalIndex, vote }: RowProps) {
         {item.description}
       </td>
 
-      {/* VOTES + CONTROLS */}
+      {/* VOTES */}
       <td className="py-4 px-1.5">
         <div className="flex items-center justify-end gap-3">
-          {/* Vote count */}
           <span
             className="
               text-xs font-semibold
@@ -39,39 +102,24 @@ export default function PipelineRow({ item, globalIndex, vote }: RowProps) {
               text-[#456882]
             "
           >
-            {item.votes} votes
+            {count} votes
           </span>
 
-          {/* Controls */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => vote(globalIndex, +1)}
-              className="
-                p-1.5 rounded-md
-                text-[#456882]
-                hover:text-[#1B3C53]
-                hover:bg-[#1B3C53]/5
-                transition
-              "
-              aria-label="Upvote"
-            >
-              <ArrowUp size={15} />
-            </button>
-
-            <button
-              onClick={() => vote(globalIndex, -1)}
-              className="
-                p-1.5 rounded-md
-                text-[#456882]
-                hover:text-[#1B3C53]
-                hover:bg-[#1B3C53]/5
-                transition
-              "
-              aria-label="Downvote"
-            >
-              <ArrowDown size={15} />
-            </button>
-          </div>
+          <button
+            onClick={vote}
+            disabled={hasVoted || loading}
+            className={`
+              p-1.5 rounded-md transition
+              ${
+                hasVoted
+                  ? "text-[#456882]/40 cursor-not-allowed"
+                  : "text-[#456882] hover:text-[#1B3C53] hover:bg-[#1B3C53]/5"
+              }
+            `}
+            aria-label="Upvote"
+          >
+            <ArrowUp size={15} />
+          </button>
         </div>
       </td>
     </>

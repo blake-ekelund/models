@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Settings, RefreshCw } from "lucide-react";
+import { Download, RefreshCw } from "lucide-react";
 
 export type ModelKey = "Revenue Model" | "Cash Flow Model" | "Explore More";
 
@@ -10,7 +10,6 @@ interface MiniModelNavProps {
   onChange: (model: ModelKey) => void;
 
   onExport?: (() => void) | null;
-  onSettings?: () => void;
   isExporting?: boolean;
 }
 
@@ -81,7 +80,6 @@ export default function MiniModelNav({
   activeModel,
   onChange,
   onExport,
-  onSettings,
   isExporting = false,
 }: MiniModelNavProps) {
   return (
@@ -133,16 +131,6 @@ export default function MiniModelNav({
           )}
         </IconAction>
 
-        )}
-
-        {onSettings && (
-          <IconAction
-            onClick={onSettings}
-            label="Model settings"
-            tooltip="Customize branding & units"
-          >
-            <Settings size={18} />
-          </IconAction>
         )}
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 import Hero from "./components/home/hero";
@@ -15,32 +15,21 @@ import SubmitIdeaForm from "./components/home/models-pipeline/SubmitIdeaForm";
 
 export default function HomePage() {
   const [showIdeaModal, setShowIdeaModal] = useState(false);
-  const [submitIdea, setSubmitIdea] = useState<
-    null | ((title: string, description: string) => void)
-  >(null);
 
-  const handleRegisterSubmit = useCallback(
-    (fn: (title: string, description: string) => void) => {
-      setSubmitIdea(() => fn);
-    },
-    []
-  );
+  // Ref to trigger pipeline reload
+  const reloadPipelineRef = useRef<null | (() => void)>(null);
 
   return (
     <>
       {/* MODAL */}
       <Modal open={showIdeaModal} onClose={() => setShowIdeaModal(false)}>
-        {submitIdea ? (
-          <SubmitIdeaForm
-            onSubmit={(title, description) => {
-              submitIdea(title, description);
-              setShowIdeaModal(false);
-            }}
-            onCancel={() => setShowIdeaModal(false)}
-          />
-        ) : (
-          <div className="text-black p-20">Loading…</div>
-        )}
+        <SubmitIdeaForm
+          onCancel={() => setShowIdeaModal(false)}
+          onSuccess={() => {
+            setShowIdeaModal(false);
+            reloadPipelineRef.current?.();
+          }}
+        />
       </Modal>
 
       {/* PAGE ROOT */}
@@ -78,7 +67,7 @@ export default function HomePage() {
 
           {/* MODEL PIPELINE */}
           <motion.section
-            id="pipeline"
+            id="requests"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -86,7 +75,9 @@ export default function HomePage() {
           >
             <ModelsPipeline
               openModal={() => setShowIdeaModal(true)}
-              registerSubmit={handleRegisterSubmit}
+              registerReload={(fn) => {
+                reloadPipelineRef.current = fn;
+              }}
             />
           </motion.section>
 
@@ -101,15 +92,14 @@ export default function HomePage() {
             <Pricing />
           </motion.section>
 
-          {/* PRICING PHILOSOPHY FAQ */}
+          {/* FAQ (placeholder) */}
           <motion.section
             id="faq"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7 }}
             className="scroll-mt-[96px] mt-16"
-          >
-          </motion.section>
+          />
 
           {/* ABOUT */}
           <motion.section

@@ -1,31 +1,69 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface SubmitIdeaFormProps {
-  onSubmit: (title: string, description: string) => void;
+  onSuccess: () => void;
   onCancel: () => void;
 }
 
 export default function SubmitIdeaForm({
-  onSubmit,
+  onSuccess,
   onCancel,
 }: SubmitIdeaFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const titleRef = useRef<HTMLInputElement | null>(null);
 
-  // Autofocus the title when modal opens
+  // Autofocus title
   useEffect(() => {
     titleRef.current?.focus();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
+
     if (!title.trim() || !description.trim()) return;
-    onSubmit(title, description);
-  };
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setError("Please sign in to submit an idea.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    const { error: insertError } = await supabase
+      .from("model_requests")
+      .insert({
+        model_key: title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, ""),
+        name: title.trim(),
+        description: description.trim(),
+        public: false,
+        created_by: user.id,
+      });
+
+    setSubmitting(false);
+
+    if (insertError) {
+      console.error(insertError);
+      setError("Something went wrong. Please try again.");
+      return;
+    }
+
+    onSuccess();
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 pt-8">
@@ -52,6 +90,7 @@ export default function SubmitIdeaForm({
           placeholder="Pricing Elasticity Model"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          disabled={submitting}
         />
       </div>
 
@@ -74,14 +113,23 @@ export default function SubmitIdeaForm({
           placeholder="Describe what the model should help founders do…"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          disabled={submitting}
         />
       </div>
+
+      {/* ERROR */}
+      {error && (
+        <div className="text-sm text-red-600">
+          {error}
+        </div>
+      )}
 
       {/* ACTIONS */}
       <div className="flex justify-end gap-3 pt-2">
         <button
           type="button"
           onClick={onCancel}
+          disabled={submitting}
           className="
             px-4 py-2 rounded-lg
             text-sm font-medium
@@ -89,6 +137,7 @@ export default function SubmitIdeaForm({
             text-[#1B3C53]
             hover:bg-[#1B3C53]/5
             transition
+            disabled:opacity-50
           "
         >
           Cancel
@@ -96,15 +145,17 @@ export default function SubmitIdeaForm({
 
         <button
           type="submit"
+          disabled={submitting}
           className="
             px-4 py-2 rounded-lg
             text-sm font-medium
             bg-[#234C6A] text-white
             hover:bg-[#456882]
             transition
+            disabled:opacity-50
           "
         >
-          Submit
+          {submitting ? "Submitting…" : "Submit"}
         </button>
       </div>
     </form>

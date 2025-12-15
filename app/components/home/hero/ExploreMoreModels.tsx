@@ -227,7 +227,7 @@ export default function ExploreMoreModels() {
       {/* CTAs */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => (window.location.href = "/requests")}
+          onClick={() => (window.location.href = "/#pipeline")}
           className="
             flex items-center justify-center gap-2
             py-2.5 rounded-lg
@@ -238,7 +238,7 @@ export default function ExploreMoreModels() {
           "
         >
           <List size={16} />
-          View Requests
+          View Our Pipeline
         </button>
 
         <button

@@ -31,23 +31,32 @@ export default function Feedback() {
   // FOOTER-AWARE OFFSET
   // ---------------------------------------------------
   useEffect(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) return;
+    function updateOffset() {
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          const height = entry.target.getBoundingClientRect().height;
-          setBottomOffset(height + 24);
-        } else {
-          setBottomOffset(24);
-        }
-      },
-      { threshold: 0.01 }
-    );
+      const distanceFromBottom =
+        documentHeight - (scrollY + viewportHeight);
 
-    observer.observe(footer);
-    return () => observer.disconnect();
+      const footerSafeSpace = 20;
+
+      if (distanceFromBottom < 120) {
+        // push the button up as we approach the bottom
+        setBottomOffset(footerSafeSpace + (120 - distanceFromBottom));
+      } else {
+        setBottomOffset(footerSafeSpace);
+      }
+    }
+
+    updateOffset();
+    window.addEventListener("scroll", updateOffset);
+    window.addEventListener("resize", updateOffset);
+
+    return () => {
+      window.removeEventListener("scroll", updateOffset);
+      window.removeEventListener("resize", updateOffset);
+    };
   }, []);
 
   // ---------------------------------------------------
