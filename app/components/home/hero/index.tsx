@@ -217,18 +217,32 @@ export default function Home() {
             />
 
             {/* MODELS (ALWAYS MOUNTED) */}
-            <div className={activeModel === "Revenue Model" ? "block" : "hidden"}>
-              <RevenueModel
-                onExportReady={setRevenueExportFn}
-                onExportStateChange={setRevenueIsExporting}
-              />
-            </div>
+            <div className="relative h-full">
+              <div
+                className={
+                  activeModel === "Revenue Model"
+                    ? "relative opacity-100 pointer-events-auto"
+                    : "absolute inset-0 opacity-0 pointer-events-none"
+                }
+              >
+                <RevenueModel
+                  onExportReady={setRevenueExportFn}
+                  onExportStateChange={setRevenueIsExporting}
+                />
+              </div>
 
-            <div className={activeModel === "Cash Flow Model" ? "block" : "hidden"}>
-              <CashFlowMini
-                onExportReady={setCashFlowExportFn}
-                onExportStateChange={setCashFlowIsExporting}
-              />
+              <div
+                className={
+                  activeModel === "Cash Flow Model"
+                    ? "relative opacity-100 pointer-events-auto"
+                    : "absolute inset-0 opacity-0 pointer-events-none"
+                }
+              >
+                <CashFlowMini
+                  onExportReady={setCashFlowExportFn}
+                  onExportStateChange={setCashFlowIsExporting}
+                />
+              </div>
             </div>
 
             <div className={activeModel === "Explore More" ? "block" : "hidden"}>
