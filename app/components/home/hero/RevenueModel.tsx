@@ -5,7 +5,6 @@ import {
   useMemo,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
 } from "react";
 
@@ -53,9 +52,10 @@ export default function RevenueModel({
   const [isExporting, setIsExporting] = useState(false);
 
   /* ---------------------------------------------
-     Chart ref (for resize)
+     Refs
   --------------------------------------------- */
   const chartRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   /* ---------------------------------------------
      Month labels
@@ -119,7 +119,7 @@ export default function RevenueModel({
 
       const { downloadUrl } = await res.json();
 
-      // More reliable than a.click() in production
+      // Reliable in prod
       window.location.href = downloadUrl;
     } catch (err) {
       console.error(err);
@@ -145,14 +145,18 @@ export default function RevenueModel({
   }, [handleExport, onExportReady]);
 
   /* ---------------------------------------------
-     Force chart resize after layout settles
+     ResizeObserver (THIS is the fix)
   --------------------------------------------- */
-  useLayoutEffect(() => {
-    if (!chartRef.current) return;
+  useEffect(() => {
+    if (!containerRef.current || !chartRef.current) return;
 
-    requestAnimationFrame(() => {
-      chartRef.current.resize();
+    const observer = new ResizeObserver(() => {
+      chartRef.current?.resize();
     });
+
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
   }, []);
 
   /* ---------------------------------------------
@@ -243,7 +247,8 @@ export default function RevenueModel({
       </div>
 
       <div
-        className={`flex-1 bg-[#E3E3E3]/40 p-1 ${
+        ref={containerRef}
+        className={`flex-1 min-h-[300px] bg-[#E3E3E3]/40 p-1 ${
           isExporting ? "opacity-75 pointer-events-none" : ""
         }`}
       >
