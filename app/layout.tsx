@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavbarGate from "@/app/components/NavbarGate";
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import Feedback from "@/app/components/ui/Feedback";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "A financial engine for small teams.",
@@ -17,15 +18,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="relative min-h-screen bg-white text-[#1B3C53]">
-        {/* CONDITIONAL NAVBAR */}
         <NavbarGate />
 
-        {/* PAGE CONTENT */}
-        <main className="relative">
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </main>
+        <main className="relative">{children}</main>
+
+        <Analytics />
+        <SpeedInsights />
+
+        {/* Client decides if this shows */}
+        <Feedback />
       </body>
     </html>
   );

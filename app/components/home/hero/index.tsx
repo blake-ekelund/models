@@ -10,12 +10,41 @@ import CashFlowMini from "./CashFlowMini";
 import RevenueModel from "./RevenueModel";
 import ExploreMoreModels from "./ExploreMoreModels";
 
+type ModelKey = "Revenue Model" | "Cash Flow Model" | "Explore More";
+
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const modelRef = useRef<HTMLDivElement | null>(null);
 
-  const models = ["Revenue Model", "Cash Flow Model", "Explore More"];
-  const [activeModel, setActiveModel] = useState("Revenue Model");
+  const models: ModelKey[] = [
+    "Revenue Model",
+    "Cash Flow Model",
+    "Explore More",
+  ];
+
+  const [activeModel, setActiveModel] = useState<ModelKey>("Revenue Model");
+
+  // 🔑 export handlers captured from models
+  const [revenueExportFn, setRevenueExportFn] =
+    useState<null | (() => void)>(null);
+
+  const [cashFlowExportFn, setCashFlowExportFn] =
+    useState<null | (() => void)>(null);
+
+  /* -------------------------------------
+     MODEL CAPABILITIES
+  -------------------------------------- */
+  const MODEL_CAPABILITIES: Record<
+    ModelKey,
+    { export: boolean; settings: boolean }
+  > = {
+    "Revenue Model": { export: true, settings: true },
+    "Cash Flow Model": { export: true, settings: true },
+    "Explore More": { export: false, settings: false },
+  };
+
+  const { export: canExport, settings: canSettings } =
+    MODEL_CAPABILITIES[activeModel];
 
   /* -------------------------------------
      BACKGROUND PARTICLES
@@ -47,7 +76,6 @@ export default function Home() {
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      // Dots
       ctx.fillStyle = "rgba(227,227,227,0.35)";
       for (const p of particles) {
         p.x += p.vx;
@@ -61,7 +89,6 @@ export default function Home() {
         ctx.fill();
       }
 
-      // Lines
       ctx.strokeStyle = "rgba(69,104,130,0.35)";
       ctx.lineWidth = 1;
 
@@ -92,6 +119,16 @@ export default function Home() {
   }, []);
 
   /* -------------------------------------
+     EXPORT ROUTING
+  -------------------------------------- */
+  const exportHandler =
+    activeModel === "Revenue Model"
+      ? revenueExportFn
+      : activeModel === "Cash Flow Model"
+      ? cashFlowExportFn
+      : null;
+
+  /* -------------------------------------
      PAGE
   -------------------------------------- */
   return (
@@ -99,13 +136,11 @@ export default function Home() {
       className="relative w-full min-h-screen overflow-x-hidden"
       style={{ backgroundColor: "#1B3C53" }}
     >
-      {/* Canvas */}
       <canvas
         ref={canvasRef}
         className="fixed inset-0 z-0 w-full h-full pointer-events-none"
       />
 
-      {/* Content */}
       <div className="relative z-10 w-full min-h-screen flex justify-center items-center">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -163,11 +198,22 @@ export default function Home() {
               models={models}
               activeModel={activeModel}
               onChange={setActiveModel}
-              onSettings={() => console.log("settings clicked")}
+              onExport={canExport ? exportHandler ?? undefined : undefined}
+              onSettings={
+                canSettings
+                  ? () => console.log(`Open settings for ${activeModel}`)
+                  : undefined
+              }
             />
 
-            {activeModel === "Revenue Model" && <RevenueModel />}
-            {activeModel === "Cash Flow Model" && <CashFlowMini />}
+            {activeModel === "Revenue Model" && (
+              <RevenueModel onExportReady={setRevenueExportFn} />
+            )}
+
+            {activeModel === "Cash Flow Model" && (
+              <CashFlowMini onExportReady={setCashFlowExportFn} />
+            )}
+
             {activeModel === "Explore More" && <ExploreMoreModels />}
           </MiniModelContainer>
         </motion.div>

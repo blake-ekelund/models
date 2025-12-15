@@ -56,28 +56,31 @@ export function NumberInput({
 
   return (
     <div className="flex flex-col space-y-1">
-      <label className="text-sm font-medium text-[#E3E3E3]/90">
+      {/* Label */}
+      <label className="text-sm font-medium text-[#1B3C53]">
         {label}
       </label>
 
+      {/* Input */}
       <input
         type="text"
         inputMode="numeric"
         value={display}
         onChange={handleChange}
         className="
-          bg-[#1E4258]
-          border border-[#456882]
+          bg-white
+          border border-[#456882]/40
           rounded-lg
-          px-3 py-2
-          text-[#E3E3E3]
+          px-3 py-1.5
+          text-[#1B3C53]
           focus:outline-none
-          focus:ring-2 focus:ring-[#E3E3E3]/40
+          focus:ring-2 focus:ring-[#456882]/40
         "
       />
 
+      {/* Hint */}
       {hint && (
-        <p className="text-xs text-[#E3E3E3]/60">
+        <p className="text-xs text-[#456882]">
           {hint}
         </p>
       )}

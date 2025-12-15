@@ -37,10 +37,17 @@ export default function NavBar() {
     window.location.replace("/auth/sign-in?loggedOut=true");
   }
 
+  const navLinks = [
+    ["Library", "#library"],
+    ["Pipeline", "#pipeline"],
+    ["Pricing", "#pricing"],
+    ["About", "#about"],
+  ];
+
   return (
     <header className="fixed top-0 left-0 w-full z-[9998] bg-[#E3E3E3] border-b border-[#1B3C53]/10">
       <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* LOGO */}
+        {/* LEFT: LOGO */}
         <Link
           href="/"
           className="text-xl font-semibold tracking-tight text-[#1B3C53]"
@@ -57,14 +64,9 @@ export default function NavBar() {
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* DESKTOP NAV */}
+        {/* MIDDLE: NAV LINKS */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1B3C53]">
-          {[
-            ["Library", "#library"],
-            ["Pipeline", "#pipeline"],
-            ["Pricing", "#pricing"],
-            ["About", "#about"],
-          ].map(([label, href]) => (
+          {navLinks.map(([label, href]) => (
             <a
               key={label}
               href={href}
@@ -75,7 +77,7 @@ export default function NavBar() {
           ))}
         </div>
 
-        {/* DESKTOP CTA */}
+        {/* RIGHT: CTA */}
         <div className="hidden md:flex items-center gap-3">
           {signedIn === false && (
             <>
@@ -96,13 +98,27 @@ export default function NavBar() {
           )}
 
           {signedIn === true && (
-            <button
-              onClick={signOut}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
-            >
-              <LogOut size={16} />
-              Log Out
-            </button>
+            <>
+              {/* PRIMARY WORK MODE */}
+              <Link
+                href="/models/catalog"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1B3C53] font-semibold hover:bg-[#1B3C53]/5 transition"
+              >
+                Model Portal
+              </Link>
+
+              {/* SUBTLE DIVIDER */}
+              <span className="h-5 w-px bg-[#1B3C53]/20" />
+
+              {/* LOG OUT */}
+              <button
+                onClick={signOut}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
+              >
+                <LogOut size={16} />
+                Log Out
+              </button>
+            </>
           )}
         </div>
       </nav>
@@ -110,16 +126,12 @@ export default function NavBar() {
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden px-4 pb-4 space-y-3 text-sm font-medium text-[#1B3C53] bg-[#E3E3E3] border-t border-[#1B3C53]/10">
-          {[
-            ["Library", "#library"],
-            ["Pipeline", "#pipeline"],
-            ["Pricing", "#pricing"],
-            ["About", "#about"],
-          ].map(([label, href]) => (
+          {navLinks.map(([label, href]) => (
             <a
               key={label}
               href={href}
               className="block hover:text-[#456882] transition"
+              onClick={() => setOpen(false)}
             >
               {label}
             </a>
@@ -130,6 +142,7 @@ export default function NavBar() {
               <Link
                 href="/auth/sign-in"
                 className="block mt-2 px-4 py-2 rounded-lg font-semibold hover:bg-[#1B3C53]/5 transition"
+                onClick={() => setOpen(false)}
               >
                 Log In
               </Link>
@@ -137,6 +150,7 @@ export default function NavBar() {
               <Link
                 href="/auth/sign-up"
                 className="block px-4 py-2 rounded-lg mt-1 bg-[#234C6A] text-white font-semibold hover:bg-[#456882] transition"
+                onClick={() => setOpen(false)}
               >
                 Sign Up
               </Link>
@@ -144,13 +158,23 @@ export default function NavBar() {
           )}
 
           {signedIn === true && (
-            <button
-              onClick={signOut}
-              className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg font-semibold hover:bg-[#1B3C53]/5 transition"
-            >
-              <LogOut size={16} />
-              Log Out
-            </button>
+            <>
+              <Link
+                href="/models/catalog"
+                className="block mt-2 px-4 py-2 rounded-lg font-semibold hover:bg-[#1B3C53]/5 transition"
+                onClick={() => setOpen(false)}
+              >
+                Model Portal
+              </Link>
+
+              <button
+                onClick={signOut}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:bg-[#1B3C53]/5 transition"
+              >
+                <LogOut size={16} />
+                Log Out
+              </button>
+            </>
           )}
         </div>
       )}

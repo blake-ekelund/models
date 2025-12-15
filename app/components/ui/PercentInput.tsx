@@ -35,16 +35,27 @@ export function PercentInput({
   }
 
   return (
-    <div className="flex flex-col">
-      <label className="mb-1 text-[#E3E3E3]/80">{label}</label>
+    <div className="flex flex-col space-y-1">
+      {/* Label */}
+      <label className="text-sm font-medium text-[#1B3C53]">
+        {label}
+      </label>
+
+      {/* Input */}
       <input
         type="text"
         inputMode="decimal"
         value={display}
         onChange={handleChange}
-        className="bg-[#1E4258] border border-[#456882] rounded-lg px-3 py-2
-                   text-[#E3E3E3] focus:outline-none focus:ring-2 
-                   focus:ring-[#E3E3E3]/40"
+        className="
+          bg-white
+          border border-[#456882]/40
+          rounded-lg
+          px-3 py-1.5
+          text-[#1B3C53]
+          focus:outline-none
+          focus:ring-2 focus:ring-[#456882]/40
+        "
       />
     </div>
   );
