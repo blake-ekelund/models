@@ -131,8 +131,7 @@ export default function RevenueModel({
   useEffect(() => {
     if (!onExportReady) return;
     onExportReady(() => handleExport);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleExport, onExportReady]);
 
   /* ---------------------------------------------
      Chart data

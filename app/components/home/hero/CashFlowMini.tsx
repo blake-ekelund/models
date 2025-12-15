@@ -156,7 +156,8 @@ export default function CashFlowModel({
      EXPOSE EXPORT TO PARENT
   --------------------------------------------- */
   useEffect(() => {
-    onExportReady?.(() => handleExport);
+    if (!onExportReady) return;
+    onExportReady(() => handleExport);
   }, [handleExport, onExportReady]);
 
   /* ---------------------------------------------
