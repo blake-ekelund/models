@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -18,6 +18,26 @@ export default function HomePage() {
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  // ---------------------------------------------------
+  // HASH SCROLL FIX (WORKS WITH FRAMER MOTION)
+  // ---------------------------------------------------
+  useEffect(() => {
+    if (!window.location.hash) return;
+
+    const id = window.location.hash.replace("#", "");
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const timeout = setTimeout(() => {
+      el.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // ---------------------------------------------------
+  // OPEN SUBMIT IDEA (AUTH-GATED)
+  // ---------------------------------------------------
   async function handleOpenSubmitIdea() {
     const {
       data: { user },
@@ -86,8 +106,8 @@ export default function HomePage() {
       </Modal>
 
       {/* PAGE ROOT */}
-      <div className="relative w-full min-h-screen bg-[#1B3C53] text-white pt-[72px]">
-        {/* HERO */}
+      <div className="relative w-full min-h-screen bg-[#1B3C53] text-white pt-[64px]">
+        {/* HERO (LOAD ANIMATION ONLY) */}
         <motion.div
           id="home"
           initial={{ opacity: 0 }}
@@ -110,34 +130,35 @@ export default function HomePage() {
           {/* MODEL CATALOG */}
           <motion.section
             id="library"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="scroll-mt-[96px]"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="scroll-mt-[64px]"
           >
-          <ModelsCatalog onRequestModel={handleOpenSubmitIdea} />
+            <ModelsCatalog onRequestModel={handleOpenSubmitIdea} />
           </motion.section>
 
           {/* MODEL PIPELINE */}
           <motion.section
             id="requests"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="scroll-mt-[96px] mt-12"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="scroll-mt-[64px] mt-12"
           >
-            <ModelsPipeline
-              openModal={handleOpenSubmitIdea}
-            />
+            <ModelsPipeline openModal={handleOpenSubmitIdea} />
           </motion.section>
 
           {/* PRICING */}
           <motion.section
             id="pricing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7 }}
-            className="scroll-mt-[96px] mt-12"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="scroll-mt-[64px] mt-12"
           >
             <Pricing />
           </motion.section>
@@ -145,10 +166,11 @@ export default function HomePage() {
           {/* ABOUT */}
           <motion.section
             id="about"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7 }}
-            className="scroll-mt-[96px] mt-16"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="scroll-mt-[64px] mt-16"
           >
             <About />
           </motion.section>

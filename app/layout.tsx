@@ -21,7 +21,7 @@ export default function RootLayout({
         <NavbarGate />
 
         {/* MAIN CONTENT */}
-        <main className="relative min-h-[calc(100vh-64px)] flex">
+        <main className="relative min-h-[calc(100vh-72px)] flex flex-col">
           {children}
         </main>
 

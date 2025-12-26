@@ -51,101 +51,97 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="w-full flex items-center justify-center">
-      <div className="w-full max-w-md px-4">
-        <AuthCard
-          title="Log In"
-          subtitle="Welcome back. Sign in to manage your models."
-          topLeft={
-            <Link
-              href="/"
-              className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
-            >
-              ← Home
-            </Link>
-          }
+    <AuthCard
+      title="Log In"
+      subtitle="Welcome back. Sign in to manage your models."
+      topLeft={
+        <Link
+          href="/"
+          className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
         >
-          <div className="space-y-4">
-            {/* EMAIL */}
-            <div>
-              <label className="text-sm text-[#456882]">Email</label>
-              <input
-                className={inputClass}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                disabled={loading}
-              />
-            </div>
+          ← Home
+        </Link>
+      }
+    >
+      <div className="space-y-4">
+        {/* EMAIL */}
+        <div>
+          <label className="text-sm text-[#456882]">Email</label>
+          <input
+            className={inputClass}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            disabled={loading}
+          />
+        </div>
 
-            {/* PASSWORD */}
-            <div>
-              <label className="text-sm text-[#456882]">Password</label>
-              <input
-                type="password"
-                className={inputClass}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                disabled={loading}
-              />
-            </div>
+        {/* PASSWORD */}
+        <div>
+          <label className="text-sm text-[#456882]">Password</label>
+          <input
+            type="password"
+            className={inputClass}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            disabled={loading}
+          />
+        </div>
 
-            {/* FORGOT PASSWORD */}
-            <div className="text-right">
-              <Link
-                href="/auth/forgot-password"
-                className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
+        {/* FORGOT PASSWORD */}
+        <div className="text-right">
+          <Link
+            href="/auth/forgot-password"
+            className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
-            {/* PRIMARY BUTTON */}
-            <button
-              onClick={signIn}
-              className={primaryButton}
-              disabled={loading}
-            >
-              {loading ? "Signing in…" : "Log In"}
-            </button>
+        {/* PRIMARY BUTTON */}
+        <button
+          onClick={signIn}
+          className={primaryButton}
+          disabled={loading}
+        >
+          {loading ? "Signing in…" : "Log In"}
+        </button>
 
-            {/* OAUTH DIVIDER */}
-            <div className="flex items-center gap-3 my-4">
-              <div className="flex-1 h-px bg-[#E3E3E3]" />
-              <span className="text-xs text-[#456882]">
-                or continue with
-              </span>
-              <div className="flex-1 h-px bg-[#E3E3E3]" />
-            </div>
+        {/* OAUTH DIVIDER */}
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-[#E3E3E3]" />
+          <span className="text-xs text-[#456882]">
+            or continue with
+          </span>
+          <div className="flex-1 h-px bg-[#E3E3E3]" />
+        </div>
 
-            {/* GOOGLE SIGN IN */}
-            <button
-              onClick={() => signInWithOAuth("google")}
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-3 rounded-lg 
-                         border border-[#E3E3E3] py-2.5 text-sm
-                         bg-white hover:bg-gray-50 transition disabled:opacity-60"
-            >
-              <GoogleIcon />
-              Continue with Google
-            </button>
+        {/* GOOGLE SIGN IN */}
+        <button
+          onClick={() => signInWithOAuth("google")}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 rounded-lg 
+                      border border-[#E3E3E3] py-2.5 text-sm
+                      bg-white hover:bg-gray-50 transition disabled:opacity-60"
+        >
+          <GoogleIcon />
+          Continue with Google
+        </button>
 
-            {/* FOOTER */}
-            <p className="text-sm text-center text-[#456882]">
-              <Link
-                href="/auth/sign-up"
-                className="text-[#234C6A] hover:underline font-medium"
-              >
-                Don’t have an account? Sign up
-              </Link>
-            </p>
-          </div>
-        </AuthCard>
+        {/* FOOTER */}
+        <p className="text-sm text-center text-[#456882]">
+          <Link
+            href="/auth/sign-up"
+            className="text-[#234C6A] hover:underline font-medium"
+          >
+            Don’t have an account? Sign up
+          </Link>
+        </p>
       </div>
-    </div>
+    </AuthCard>
   );
 }
 

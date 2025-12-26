@@ -25,8 +25,8 @@ export default function CatalogGrid({ models, onSelect }: Props) {
         w-full
         grid
         gap-4
-        justify-items-start
-        [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]
+        items-stretch
+        [grid-template-columns:repeat(auto-fill,minmax(320px,1fr))]
       "
     >
       {models.map((model) => (

@@ -113,7 +113,7 @@ export default function ModelsCatalogPage() {
   --------------------------------------------- */
 
   return (
-    <div className="w-full px-8 space-y-6">
+    <div className="w-full p-4 xl:p-6 2xl:p-8 space-y-6">
       {/* HEADER */}
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold text-[#1B3C53]">

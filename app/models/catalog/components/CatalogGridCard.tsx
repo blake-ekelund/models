@@ -14,7 +14,7 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
   return (
     <div
       className={clsx(
-        "w-full max-w-[360px]",
+        "w-full",
         "rounded-xl border bg-white p-5 flex justify-between gap-4 transition",
         "border-[#E3E3E3]",
         isAvailable && "hover:bg-[#F7F9FB] hover:border-[#1B3C53]/30"
@@ -38,12 +38,7 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
         {isAvailable ? (
           <button
             onClick={() => onSelect(model)}
-            className="
-              text-sm font-medium
-              text-[#1B3C53]
-              hover:text-[#234C6A]
-              transition
-            "
+            className="text-sm font-medium text-[#1B3C53] hover:text-[#234C6A] transition"
           >
             Select
           </button>
@@ -56,4 +51,3 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
     </div>
   );
 }
-

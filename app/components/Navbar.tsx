@@ -37,11 +37,15 @@ export default function NavBar() {
     window.location.replace("/auth/sign-in?loggedOut=true");
   }
 
+  // ---------------------------------------------------
+  // NAV LINKS (ABSOLUTE)
+  // ---------------------------------------------------
   const navLinks = [
-    ["Library", "#library"],
-    ["Requests", "#requests"],
-    ["Pricing", "#pricing"],
-    ["About", "#about"],
+    { label: "Library", href: "/#library" },
+    { label: "Requests", href: "/#requests" },
+    { label: "Pricing", href: "/#pricing" },
+    { label: "About", href: "/#about" },
+    { label: "Blog", href: "/blog" },
   ];
 
   return (
@@ -64,20 +68,20 @@ export default function NavBar() {
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* MIDDLE: NAV LINKS */}
+        {/* MIDDLE: NAV LINKS (DESKTOP) */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#1B3C53]">
-          {navLinks.map(([label, href]) => (
-            <a
+          {navLinks.map(({ label, href }) => (
+            <Link
               key={label}
               href={href}
               className="hover:text-[#456882] transition"
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
-        {/* RIGHT: CTA */}
+        {/* RIGHT: CTA (DESKTOP) */}
         <div className="hidden md:flex items-center gap-3">
           {signedIn === false && (
             <>
@@ -99,18 +103,15 @@ export default function NavBar() {
 
           {signedIn === true && (
             <>
-              {/* PRIMARY WORK MODE */}
               <Link
                 href="/models/catalog"
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1B3C53] font-semibold hover:bg-[#1B3C53]/5 transition"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
               >
                 Model Portal
               </Link>
 
-              {/* SUBTLE DIVIDER */}
               <span className="h-5 w-px bg-[#1B3C53]/20" />
 
-              {/* LOG OUT */}
               <button
                 onClick={signOut}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-[#1B3C53] hover:bg-[#1B3C53]/5 transition"
@@ -126,15 +127,15 @@ export default function NavBar() {
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden px-4 pb-4 space-y-3 text-sm font-medium text-[#1B3C53] bg-[#E3E3E3] border-t border-[#1B3C53]/10">
-          {navLinks.map(([label, href]) => (
-            <a
+          {navLinks.map(({ label, href }) => (
+            <Link
               key={label}
               href={href}
               className="block hover:text-[#456882] transition"
               onClick={() => setOpen(false)}
             >
               {label}
-            </a>
+            </Link>
           ))}
 
           {signedIn === false && (
