@@ -10,13 +10,24 @@ export default function ModelsLayout({
 }) {
   return (
     <ModelProvider>
-      <div className="flex h-screen overflow-hidden bg-[#F7F9FB]">
-        <aside className="w-[260px] shrink-0 border-r border-[#E3E3E3]">
+      <div className="flex min-h-screen bg-[#F7F9FB]">
+        {/* SIDEBAR */}
+        <aside
+          className="
+            w-[260px] shrink-0
+            border-r border-[#E3E3E3]
+            bg-white
+          "
+        >
           <ModelSidebar />
         </aside>
 
-        <main className="flex-1 overflow-y-auto">
-          {children}
+        {/* MAIN SHELL */}
+        <main className="flex-1 flex flex-col">
+          {/* SCROLL AREA */}
+          <div className="flex-1 overflow-y-auto">
+            {children}
+          </div>
         </main>
       </div>
     </ModelProvider>

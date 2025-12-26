@@ -29,11 +29,17 @@ export interface CatalogModel extends ModelCardProps {
   created_at: string;
 }
 
+interface ModelsCatalogProps {
+  onRequestModel: () => void;
+}
+
 // ---------------------------------------------------
 // MAIN COMPONENT
 // ---------------------------------------------------
 
-export default function ModelsCatalog() {
+export default function ModelsCatalog({
+  onRequestModel,
+}: ModelsCatalogProps) {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
@@ -66,6 +72,8 @@ export default function ModelsCatalog() {
         const daysOld =
           (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
 
+        const isAvailable = m.status === "Available";
+
         return {
           id: m.id,
           slug: m.slug,
@@ -75,17 +83,17 @@ export default function ModelsCatalog() {
           status: m.status as ModelStatus,
           created_at: m.created_at,
 
-          // heuristics (replace later)
-          isNew: daysOld < 14,
+          // New only if available
+          isNew: isAvailable && daysOld < 14,
+
           popularity: 100 - Math.min(daysOld, 90),
           premium: false,
 
-          onStart:
-            m.status === "Available"
-              ? () => {
-                  window.location.href = `/models/${m.slug}`;
-                }
-              : undefined,
+          onStart: isAvailable
+            ? () => {
+                window.location.href = `/models/${m.slug}`;
+              }
+            : undefined,
         };
       });
 
@@ -97,32 +105,39 @@ export default function ModelsCatalog() {
   }, []);
 
   // ---------------------------------------------------
-  // FILTERING
+  // FILTERING + SORTING
   // ---------------------------------------------------
 
   const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+
     return models
       .filter((m) => {
-        const matchesQuery = m.name
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        const matchesCategory =
-          category === "All" || m.category === category;
-        return matchesQuery && matchesCategory;
+        if (!q) return true;
+
+        return (
+          m.name.toLowerCase().includes(q) ||
+          m.desc.toLowerCase().includes(q) ||
+          m.category.toLowerCase().includes(q)
+        );
+      })
+      .filter((m) => {
+        if (category === "All") return true;
+        return m.category === category;
       })
       .sort((a, b) => {
-        switch (sort) {
-          case "Popular":
-            return b.popularity - a.popularity;
-          case "New":
-            return Number(b.isNew ?? 0) - Number(a.isNew ?? 0);
-          case "Free":
-            return Number(a.premium) - Number(b.premium);
-          case "Premium":
-            return Number(b.premium) - Number(a.premium);
-          default:
-            return 0;
+        // 1️⃣ Available before Coming Soon
+        if (a.status !== b.status) {
+          return a.status === "Available" ? -1 : 1;
         }
+
+        // 2️⃣ New before Old (within Available)
+        if (a.isNew !== b.isNew) {
+          return a.isNew ? -1 : 1;
+        }
+
+        // 3️⃣ Fallback: popularity
+        return b.popularity - a.popularity;
       });
   }, [models, query, category, sort]);
 
@@ -145,10 +160,7 @@ export default function ModelsCatalog() {
         setQuery={setQuery}
         view={view}
         setView={setView}
-        category={category}
-        setCategory={setCategory}
-        sort={sort}
-        setSort={setSort}
+        onRequestModel={onRequestModel}
       />
 
       {loading ? (

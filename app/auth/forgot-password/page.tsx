@@ -27,64 +27,78 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <AuthCard
-      title="Reset Password"
-      subtitle="We’ll send you a link to reset your password."
-    >
-      {!sent ? (
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm text-[#456882]">
-              Email
-            </label>
-            <input
-              className={inputClass}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <button onClick={sendReset} className={primaryButton}>
-            Send reset link
-          </button>
-
-          {/* NAV BACK */}
-          <div className="pt-2 text-center">
+    <div className="w-full flex items-center justify-center">
+      <div className="w-full max-w-md px-4">
+        <AuthCard
+          title="Reset Password"
+          subtitle="We’ll send you a link to reset your password."
+          topLeft={
             <Link
-              href="/auth/sign-in"
+              href="/"
               className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
             >
-              Back to sign in
+              ← Home
             </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4 text-center">
-          <p className="text-sm text-[#456882]">
-            Check your email for a reset link.
-          </p>
+          }
+        >
+          {!sent ? (
+            <div className="space-y-4">
+              {/* EMAIL */}
+              <div>
+                <label className="text-sm text-[#456882]">
+                  Email
+                </label>
+                <input
+                  className={inputClass}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
 
-          <div className="pt-2">
-            <Link
-              href="/auth/sign-in"
-              className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
-            >
-              Return to sign in
-            </Link>
-          </div>
+              {/* SUBMIT */}
+              <button onClick={sendReset} className={primaryButton}>
+                Send reset link
+              </button>
 
-          <div className="text-sm text-[#456882]">
-            Don’t have an account?{" "}
-            <Link
-              href="/auth/sign-up"
-              className="text-[#234C6A] hover:underline font-medium"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
-      )}
-    </AuthCard>
+              {/* NAV BACK */}
+              <div className="pt-2 text-center">
+                <Link
+                  href="/auth/sign-in"
+                  className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
+                >
+                  Back to sign in
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 text-center">
+              <p className="text-sm text-[#456882]">
+                Check your email for a reset link.
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  href="/auth/sign-in"
+                  className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
+                >
+                  Return to sign in
+                </Link>
+              </div>
+
+              <div className="text-sm text-[#456882]">
+                Don’t have an account?{" "}
+                <Link
+                  href="/auth/sign-up"
+                  className="text-[#234C6A] hover:underline font-medium"
+                >
+                  Sign up
+                </Link>
+              </div>
+            </div>
+          )}
+        </AuthCard>
+      </div>
+    </div>
   );
 }

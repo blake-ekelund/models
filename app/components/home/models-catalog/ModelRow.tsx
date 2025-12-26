@@ -33,14 +33,12 @@ export default function ModelRow({
   return (
     <>
       {/* MODEL NAME */}
-      <td className="py-3 px-4 font-medium text-[#1B3C53]">
-        <div className="flex items-center gap-2">
-          {name}
-        </div>
+      <td className="py-3 px-4 font-medium text-sm text-[#1B3C53]">
+        {name}
       </td>
 
-      {/* CATEGORY */}
-      <td className="py-3 px-4">
+      {/* CATEGORY — no wrap */}
+      <td className="py-3 px-4 whitespace-nowrap">
         <span
           className="
             inline-flex items-center gap-1
@@ -58,33 +56,26 @@ export default function ModelRow({
         {desc}
       </td>
 
-      {/* STATUS */}
-      <td className="py-3 px-4">
-        {isAvailable ? (
-          <span className="
+      {/* STATUS — no wrap */}
+      <td className="py-3 px-4 whitespace-nowrap">
+        <span
+          className="
             text-xs font-semibold px-2 py-1 rounded-full
             bg-[#456882]/10 text-[#456882]
-          ">
-            Available
-          </span>
-        ) : (
-          <span className="
-            text-xs font-semibold px-2 py-1 rounded-full
-            bg-[#1B3C53]/10 text-[#1B3C53]
-          ">
-            Coming Soon
-          </span>
-        )}
+          "
+        >
+          {isAvailable ? "Available" : "Coming Soon"}
+        </span>
       </td>
 
       {/* ACTION */}
-      <td className="py-3 px-4 text-center">
+      <td className="py-3 px-4 text-center whitespace-nowrap">
         <button
           onClick={isAvailable ? onStart : undefined}
           disabled={!isAvailable}
           className={`
             inline-flex items-center justify-center
-            text-sm font-semibold whitespace-nowrap
+            text-sm font-semibold
             transition
             ${
               isAvailable

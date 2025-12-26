@@ -8,22 +8,18 @@ interface PipelineItem {
   name: string;
   description: string;
   vote_count: number;
+  status: "request" | "wip" | "published";
 }
 
 interface Props {
   items: PipelineItem[];
-  page: number;
-  pageSize: number;
 }
 
-export default function PipelineTable({
-  items,
-}: Props) {
+export default function PipelineTable({ items }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       className="
         w-full overflow-hidden rounded-xl
         bg-white

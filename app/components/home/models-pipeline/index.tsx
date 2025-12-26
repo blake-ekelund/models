@@ -12,52 +12,49 @@ interface PipelineItem {
   name: string;
   description: string;
   vote_count: number;
+  status: "request" | "wip" | "published";
 }
 
 interface ModelsPipelineProps {
   openModal: () => void;
-  registerReload: (fn: () => void) => void;
 }
 
-export default function ModelsPipeline({
-  openModal,
-}: ModelsPipelineProps) {
+export default function ModelsPipeline({ openModal }: ModelsPipelineProps) {
   const [items, setItems] = useState<PipelineItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  /* ---------------------------------------------
-     Load public model requests
-  --------------------------------------------- */
   const load = useCallback(async () => {
     setLoading(true);
 
     const { data, error } = await supabase
       .from("model_requests")
-      .select("id, name, description, vote_count")
+      .select("id, name, description, vote_count, status")
       .eq("public", true)
-      .order("vote_count", { ascending: false });
+      .neq("status", "published");
 
     if (error) {
       console.error(error);
       setItems([]);
     } else {
-      setItems(data ?? []);
+      const sorted = (data ?? []).sort((a, b) => {
+        if (a.status === "wip" && b.status !== "wip") return -1;
+        if (a.status !== "wip" && b.status === "wip") return 1;
+        return b.vote_count - a.vote_count;
+      });
+
+      setItems(sorted);
     }
 
     setLoading(false);
   }, []);
 
-  /* Initial load */
   useEffect(() => {
     load();
   }, [load]);
 
-  /* ---------------------------------------------
-     Pagination
-  --------------------------------------------- */
   const paginated = items.slice(
     (page - 1) * pageSize,
     page * pageSize
@@ -66,7 +63,6 @@ export default function ModelsPipeline({
   return (
     <section className="relative z-10 w-full py-20 text-[#1B3C53]">
       <div className="max-w-6xl mx-auto px-6">
-        {/* HEADER */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-4xl font-bold">Model Requests</h3>
 
@@ -86,12 +82,10 @@ export default function ModelsPipeline({
           </button>
         </div>
 
-        {/* DESCRIPTION */}
         <p className="text-[#456882] text-sm mb-10 max-w-2xl leading-relaxed">
-          A leaderboard of models requested by founders. Upvote the ideas you want us to build next.
+          Vote on what we should build next. Models in progress are shown at the top.
         </p>
 
-        {/* CONTENT */}
         {loading ? (
           <div className="text-sm text-[#456882]">Loading models…</div>
         ) : items.length === 0 ? (
@@ -100,11 +94,7 @@ export default function ModelsPipeline({
           </div>
         ) : (
           <>
-            <PipelineTable
-              items={paginated}
-              page={page}
-              pageSize={pageSize}
-            />
+            <PipelineTable items={paginated} />
 
             <div className="flex justify-center mt-8">
               <PaginationControls

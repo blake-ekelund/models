@@ -11,7 +11,7 @@ interface Props {
 export default function CatalogGrid({ models, onSelect }: Props) {
   if (models.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-[#E3E3E3] p-12 text-center bg-white">
+      <div className="w-full rounded-xl border border-dashed border-[#E3E3E3] p-12 text-center bg-white">
         <p className="text-sm text-[#456882]">
           No models match your filters.
         </p>
@@ -22,11 +22,11 @@ export default function CatalogGrid({ models, onSelect }: Props) {
   return (
     <div
       className="
+        w-full
         grid
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-3
         gap-4
+        justify-items-start
+        [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]
       "
     >
       {models.map((model) => (

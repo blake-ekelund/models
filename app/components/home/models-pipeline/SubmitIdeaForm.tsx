@@ -34,10 +34,8 @@ export default function SubmitIdeaForm({
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      setError("Please sign in to submit an idea.");
-      return;
-    }
+    // Auth is handled upstream — just bail if missing
+    if (!user) return;
 
     setSubmitting(true);
 

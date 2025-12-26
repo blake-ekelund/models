@@ -20,12 +20,14 @@ export default function RootLayout({
       <body className="relative min-h-screen bg-white text-[#1B3C53]">
         <NavbarGate />
 
-        <main className="relative">{children}</main>
+        {/* MAIN CONTENT */}
+        <main className="relative min-h-[calc(100vh-64px)] flex">
+          {children}
+        </main>
 
         <Analytics />
         <SpeedInsights />
 
-        {/* Client decides if this shows */}
         <Feedback />
       </body>
     </html>

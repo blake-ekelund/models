@@ -56,90 +56,100 @@ export default function SignUpPage() {
   }
 
   return (
-    <AuthCard
-      title="Create an Account"
-      subtitle="Sign up to start building and managing financial models."
-    >
-      <div className="space-y-4">
-        {/* EMAIL */}
-        <div>
-          <label className="text-sm text-[#456882]">
-            Email
-          </label>
-          <input
-            className={inputClass}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            disabled={loading}
-          />
-        </div>
-
-        {/* PASSWORD */}
-        <div>
-          <label className="text-sm text-[#456882]">
-            Password
-          </label>
-          <input
-            type="password"
-            className={inputClass}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            disabled={loading}
-          />
-        </div>
-
-        {/* ERROR */}
-        {error && (
-          <p className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
-
-        {/* PRIMARY BUTTON */}
-        <button
-          onClick={signUp}
-          className={primaryButton}
-          disabled={loading}
-        >
-          {loading ? "Creating account…" : "Sign Up"}
-        </button>
-
-        {/* OAUTH DIVIDER */}
-        <div className="flex items-center gap-3 my-4">
-          <div className="flex-1 h-px bg-[#E3E3E3]" />
-          <span className="text-xs text-[#456882]">
-            or continue with
-          </span>
-          <div className="flex-1 h-px bg-[#E3E3E3]" />
-        </div>
-
-        {/* GOOGLE SIGN UP */}
-        <button
-          onClick={signUpWithGoogle}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 rounded-lg 
-                     border border-[#E3E3E3] py-2.5 text-sm
-                     bg-white hover:bg-gray-50 transition disabled:opacity-60"
-        >
-          <GoogleIcon />
-          Continue with Google
-        </button>
-
-        {/* NAV LINKS */}
-        <div className="pt-2 space-y-1 text-center">
-          <div>
+    <div className="w-full flex items-center justify-center">
+      <div className="w-full max-w-md px-4">
+        <AuthCard
+          title="Create an Account"
+          subtitle="Sign up to start building and managing financial models."
+          topLeft={
             <Link
-              href="/auth/sign-in"
+              href="/"
               className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
             >
-              Already have an account? Log in
+              ← Home
             </Link>
+          }
+        >
+          <div className="space-y-4">
+            {/* EMAIL */}
+            <div>
+              <label className="text-sm text-[#456882]">
+                Email
+              </label>
+              <input
+                className={inputClass}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                disabled={loading}
+              />
+            </div>
+
+            {/* PASSWORD */}
+            <div>
+              <label className="text-sm text-[#456882]">
+                Password
+              </label>
+              <input
+                type="password"
+                className={inputClass}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={loading}
+              />
+            </div>
+
+            {/* ERROR */}
+            {error && (
+              <p className="text-sm text-red-600">
+                {error}
+              </p>
+            )}
+
+            {/* PRIMARY BUTTON */}
+            <button
+              onClick={signUp}
+              className={primaryButton}
+              disabled={loading}
+            >
+              {loading ? "Creating account…" : "Sign Up"}
+            </button>
+
+            {/* OAUTH DIVIDER */}
+            <div className="flex items-center gap-3 my-4">
+              <div className="flex-1 h-px bg-[#E3E3E3]" />
+              <span className="text-xs text-[#456882]">
+                or continue with
+              </span>
+              <div className="flex-1 h-px bg-[#E3E3E3]" />
+            </div>
+
+            {/* GOOGLE SIGN UP */}
+            <button
+              onClick={signUpWithGoogle}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 rounded-lg 
+                         border border-[#E3E3E3] py-2.5 text-sm
+                         bg-white hover:bg-gray-50 transition disabled:opacity-60"
+            >
+              <GoogleIcon />
+              Continue with Google
+            </button>
+
+            {/* NAV LINKS */}
+            <div className="pt-2 text-center">
+              <Link
+                href="/auth/sign-in"
+                className="text-sm text-[#456882] hover:text-[#1B3C53] hover:underline"
+              >
+                Already have an account? Log in
+              </Link>
+            </div>
           </div>
-        </div>
+        </AuthCard>
       </div>
-    </AuthCard>
+    </div>
   );
 }
 

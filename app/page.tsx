@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
 
 import Hero from "./components/home/hero";
 import ModelsCatalog from "./components/home/models-catalog";
@@ -15,20 +16,72 @@ import SubmitIdeaForm from "./components/home/models-pipeline/SubmitIdeaForm";
 
 export default function HomePage() {
   const [showIdeaModal, setShowIdeaModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
-  // Ref to trigger pipeline reload
-  const reloadPipelineRef = useRef<null | (() => void)>(null);
+  async function handleOpenSubmitIdea() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    setShowIdeaModal(true);
+  }
 
   return (
     <>
-      {/* MODAL */}
+      {/* AUTH MODAL */}
+      <Modal open={showAuthModal} onClose={() => setShowAuthModal(false)}>
+        <div className="max-w-sm">
+          <h3 className="text-xl font-semibold text-[#1B3C53] mb-2">
+            Sign in to continue
+          </h3>
+
+          <p className="text-sm text-[#456882] mb-6">
+            Create an account or sign in to submit model ideas and vote.
+          </p>
+
+          <div className="space-y-3">
+            <a
+              href="/auth/sign-in"
+              className="
+                block w-full text-center
+                px-4 py-2.5 rounded-lg
+                text-sm font-semibold
+                bg-[#234C6A] text-white
+                hover:bg-[#456882]
+                transition
+              "
+            >
+              Sign in
+            </a>
+
+            <a
+              href="/auth/sign-up"
+              className="
+                block w-full text-center
+                px-4 py-2.5 rounded-lg
+                text-sm font-semibold
+                border border-[#456882]/30
+                text-[#1B3C53]
+                hover:bg-[#1B3C53]/5
+                transition
+              "
+            >
+              Create an account
+            </a>
+          </div>
+        </div>
+      </Modal>
+
+      {/* SUBMIT IDEA MODAL */}
       <Modal open={showIdeaModal} onClose={() => setShowIdeaModal(false)}>
         <SubmitIdeaForm
           onCancel={() => setShowIdeaModal(false)}
-          onSuccess={() => {
-            setShowIdeaModal(false);
-            reloadPipelineRef.current?.();
-          }}
+          onSuccess={() => setShowIdeaModal(false)}
         />
       </Modal>
 
@@ -62,7 +115,7 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="scroll-mt-[96px]"
           >
-            <ModelsCatalog />
+          <ModelsCatalog onRequestModel={handleOpenSubmitIdea} />
           </motion.section>
 
           {/* MODEL PIPELINE */}
@@ -74,10 +127,7 @@ export default function HomePage() {
             className="scroll-mt-[96px] mt-12"
           >
             <ModelsPipeline
-              openModal={() => setShowIdeaModal(true)}
-              registerReload={(fn) => {
-                reloadPipelineRef.current = fn;
-              }}
+              openModal={handleOpenSubmitIdea}
             />
           </motion.section>
 
@@ -92,15 +142,6 @@ export default function HomePage() {
             <Pricing />
           </motion.section>
 
-          {/* FAQ (placeholder) */}
-          <motion.section
-            id="faq"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7 }}
-            className="scroll-mt-[96px] mt-16"
-          />
-
           {/* ABOUT */}
           <motion.section
             id="about"
@@ -112,7 +153,6 @@ export default function HomePage() {
             <About />
           </motion.section>
 
-          {/* FOOTER */}
           <Footer />
         </div>
       </div>

@@ -1,17 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, List, Plus } from "lucide-react";
+import { X, List, Plus, CheckCircle } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
-interface CatalogModel {
+interface ModelRequest {
   id: string;
-  slug: string;
   name: string;
   description: string;
-  category: string;
-  status: string;
-  inputs_preview: string[] | null;
+  vote_count: number;
 }
 
 const MAX_MODELS = 5;
@@ -22,77 +19,82 @@ export default function ExploreMoreModels() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [catalog, setCatalog] = useState<CatalogModel[]>([]);
-  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [requests, setRequests] = useState<ModelRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(true);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
   /* ---------------------------------------------
-     Fetch model catalog (capped)
+     Load public model requests (top voted)
   --------------------------------------------- */
   useEffect(() => {
-    async function loadCatalog() {
-      setCatalogLoading(true);
+    async function loadRequests() {
+      setRequestsLoading(true);
 
       const { data, error } = await supabase
-        .from("model_catalog")
-        .select(
-          "id, slug, name, description, category, status, inputs_preview"
-        )
-        .order("created_at", { ascending: true })
+        .from("model_requests")
+        .select("id, name, description, vote_count")
+        .eq("public", true)
+        .order("vote_count", { ascending: false })
         .limit(MAX_MODELS);
 
       if (error) {
         console.error(error);
-        setCatalog([]);
+        setRequests([]);
       } else {
-        setCatalog(data ?? []);
+        setRequests(data ?? []);
       }
 
-      setCatalogLoading(false);
+      setRequestsLoading(false);
     }
 
-    loadCatalog();
+    loadRequests();
   }, []);
 
   /* ---------------------------------------------
-     Submit request
+     Submit new model request
   --------------------------------------------- */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !description.trim()) return;
-
-    setLoading(true);
     setError(null);
+
+    if (!title.trim() || !description.trim()) return;
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { error } = await supabase.from("model_requests").insert({
-      title: title.trim(),
-      description: description.trim(),
-      user_id: user?.id ?? null,
-      status: "new",
-    });
+    if (!user) {
+      setError("Please sign in to submit a model request.");
+      return;
+    }
+
+    setLoading(true);
+
+    const { error: insertError } = await supabase
+      .from("model_requests")
+      .insert({
+        model_key: title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, ""),
+        name: title.trim(),
+        description: description.trim(),
+        public: false,
+        created_by: user.id,
+      });
 
     setLoading(false);
 
-    if (error) {
-      console.error(error);
+    if (insertError) {
+      console.error(insertError);
       setError("Something went wrong. Please try again.");
       return;
     }
 
+    // 🔒 Explicit success state — no auto close
     setSubmitted(true);
-
-    setTimeout(() => {
-      setSubmitted(false);
-      setShowRequestForm(false);
-      setTitle("");
-      setDescription("");
-    }, 1200);
   }
 
   /* ---------------------------------------------
@@ -102,9 +104,13 @@ export default function ExploreMoreModels() {
     return (
       <div className="flex flex-col h-full text-[#1B3C53]">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Submit a Request</h2>
+          <h2 className="text-xl font-semibold">Request a Model</h2>
           <button
-            onClick={() => setShowRequestForm(false)}
+            onClick={() => {
+              setShowRequestForm(false);
+              setSubmitted(false);
+              setError(null);
+            }}
             className="p-1 rounded-md hover:bg-[#E3E3E3]"
           >
             <X size={18} />
@@ -112,10 +118,39 @@ export default function ExploreMoreModels() {
         </div>
 
         {submitted ? (
-          <div className="text-sm text-center py-6 text-[#456882]">
-            Request submitted. Thank you.
+          /* SUCCESS STATE */
+          <div className="flex flex-col items-center justify-center py-10 text-[#456882]">
+            <CheckCircle size={32} className="mb-3 text-[#234C6A]" />
+
+            <div className="text-sm font-medium mb-1">
+              Request submitted
+            </div>
+
+            <div className="text-xs text-center max-w-xs mb-6">
+              Thanks for the idea. We’ll review it and decide whether to add it to the public requests.
+            </div>
+
+            <button
+              onClick={() => {
+                setShowRequestForm(false);
+                setSubmitted(false);
+                setTitle("");
+                setDescription("");
+                setError(null);
+              }}
+              className="
+                px-4 py-2 rounded-lg
+                text-sm font-semibold
+                bg-[#234C6A] text-white
+                hover:bg-[#456882]
+                transition
+              "
+            >
+              Done
+            </button>
           </div>
         ) : (
+          /* FORM STATE */
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-1">
             <div>
               <label className="text-sm font-medium mb-1 block">
@@ -128,6 +163,7 @@ export default function ExploreMoreModels() {
                            focus:ring-[#456882]/30"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                disabled={loading}
               />
             </div>
 
@@ -143,6 +179,7 @@ export default function ExploreMoreModels() {
                            h-24 resize-none"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                disabled={loading}
               />
             </div>
 
@@ -170,7 +207,7 @@ export default function ExploreMoreModels() {
   }
 
   /* ---------------------------------------------
-     Catalog View
+     Public Requests Preview
   --------------------------------------------- */
   return (
     <div className="flex flex-col h-full text-[#1B3C53]">
@@ -179,21 +216,20 @@ export default function ExploreMoreModels() {
       </h2>
 
       <p className="text-sm text-[#456882] mb-4">
-        Here’s what’s coming next. You can request models that matter to you.
+        Popular models requested by founders. Vote on what we build next.
       </p>
 
-      {/* Catalog list (max 5) */}
       <div className="space-y-2 mb-4">
-        {catalogLoading ? (
+        {requestsLoading ? (
           <div className="text-sm text-[#456882]">
-            Loading models…
+            Loading requests…
           </div>
-        ) : catalog.length === 0 ? (
+        ) : requests.length === 0 ? (
           <div className="text-sm text-[#456882]">
-            No upcoming models yet.
+            No public requests yet.
           </div>
         ) : (
-          catalog.map((item) => (
+          requests.map((item) => (
             <div
               key={item.id}
               className="bg-white border border-[#456882]/30
@@ -206,19 +242,13 @@ export default function ExploreMoreModels() {
                 <span className="text-xs font-semibold px-2 py-0.5
                                  bg-[#456882]/10 text-[#456882]
                                  rounded-full">
-                  {item.status}
+                  {item.vote_count} votes
                 </span>
               </div>
 
-              <p className="text-xs text-[#456882] mb-1">
+              <p className="text-xs text-[#456882]">
                 {item.description}
               </p>
-
-              {item.inputs_preview && (
-                <div className="text-xs text-[#456882]/70">
-                  Inputs: {item.inputs_preview.join(", ") }
-                </div>
-              )}
             </div>
           ))
         )}
@@ -227,7 +257,7 @@ export default function ExploreMoreModels() {
       {/* CTAs */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => (window.location.href = "/#pipeline")}
+          onClick={() => (window.location.href = "/#requests")}
           className="
             flex items-center justify-center gap-2
             py-2.5 rounded-lg
@@ -238,7 +268,7 @@ export default function ExploreMoreModels() {
           "
         >
           <List size={16} />
-          View Our Pipeline
+          View Model Requests
         </button>
 
         <button

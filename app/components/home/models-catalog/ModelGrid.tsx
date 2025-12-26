@@ -25,6 +25,7 @@ const itemVariants = {
 export default function ModelGrid({ models }: ModelGridProps) {
   return (
     <motion.div
+      key={models.map((m) => m.name).join("|")}
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -42,16 +43,10 @@ export default function ModelGrid({ models }: ModelGridProps) {
           variants={itemVariants}
           transition={{ duration: 0.25, ease: "easeOut" }}
         >
-          <ModelCard
-            name={model.name}
-            desc={model.desc}
-            status={model.status}
-            category={model.category}
-            isNew={model.isNew}
-            onStart={model.onStart}
-          />
+          <ModelCard {...model} />
         </motion.div>
       ))}
     </motion.div>
   );
 }
+

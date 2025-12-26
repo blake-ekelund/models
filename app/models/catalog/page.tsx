@@ -74,19 +74,28 @@ export default function ModelsCatalogPage() {
      Filtering (query + category)
   --------------------------------------------- */
   const filteredModels = useMemo(() => {
-    return models.filter((m) => {
-      const matchesQuery = query
-        ? `${m.name} ${m.description} ${m.category}`
-            .toLowerCase()
-            .includes(query.toLowerCase())
-        : true;
+    return models
+      .filter((m) => {
+        const matchesQuery = query
+          ? `${m.name} ${m.description} ${m.category}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          : true;
 
-      const matchesCategory = activeCategory
-        ? m.category === activeCategory
-        : true;
+        const matchesCategory = activeCategory
+          ? m.category === activeCategory
+          : true;
 
-      return matchesQuery && matchesCategory;
-    });
+        return matchesQuery && matchesCategory;
+      })
+      .sort((a, b) => {
+        // Available first
+        if (a.status !== b.status) {
+          return a.status === "Available" ? -1 : 1;
+        }
+        // Then alphabetically
+        return a.name.localeCompare(b.name);
+      });
   }, [models, query, activeCategory]);
 
   /* ---------------------------------------------
@@ -104,7 +113,7 @@ export default function ModelsCatalogPage() {
   --------------------------------------------- */
 
   return (
-    <div className="max-w-7xl mx-auto p-8 space-y-6">
+    <div className="w-full px-8 space-y-6">
       {/* HEADER */}
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold text-[#1B3C53]">

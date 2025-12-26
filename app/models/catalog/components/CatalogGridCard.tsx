@@ -14,13 +14,14 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
   return (
     <div
       className={clsx(
+        "w-full max-w-[360px]",
         "rounded-xl border bg-white p-5 flex justify-between gap-4 transition",
         "border-[#E3E3E3]",
         isAvailable && "hover:bg-[#F7F9FB] hover:border-[#1B3C53]/30"
       )}
     >
       <div className="space-y-1">
-        <div className="text-sm font-medium text-[#1B3C53]">
+        <div className="text-sm font-medium text-[#1B3C53] line-clamp-2">
           {model.name}
         </div>
 
@@ -33,7 +34,7 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-start">
         {isAvailable ? (
           <button
             onClick={() => onSelect(model)}
@@ -55,3 +56,4 @@ export default function CatalogGridCard({ model, onSelect }: Props) {
     </div>
   );
 }
+

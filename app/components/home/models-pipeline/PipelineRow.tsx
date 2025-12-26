@@ -9,6 +9,7 @@ interface RowItem {
   name: string;
   description: string;
   vote_count: number;
+  status: "request" | "wip" | "published";
 }
 
 interface RowProps {
@@ -20,9 +21,8 @@ export default function PipelineRow({ item }: RowProps) {
   const [count, setCount] = useState(item.vote_count);
   const [loading, setLoading] = useState(false);
 
-  /* ---------------------------------------------
-     Check if user already voted
-  --------------------------------------------- */
+  const votingDisabled = item.status === "wip";
+
   useEffect(() => {
     async function checkVote() {
       const {
@@ -44,11 +44,8 @@ export default function PipelineRow({ item }: RowProps) {
     checkVote();
   }, [item.id]);
 
-  /* ---------------------------------------------
-     Vote handler
-  --------------------------------------------- */
   async function vote() {
-    if (loading || hasVoted) return;
+    if (loading || hasVoted || votingDisabled) return;
 
     const {
       data: { user },
@@ -68,12 +65,11 @@ export default function PipelineRow({ item }: RowProps) {
         user_id: user.id,
       });
 
-    if (error) {
-      // unique constraint violation → already voted
-      setHasVoted(true);
-    } else {
+    if (!error) {
       setHasVoted(true);
       setCount((c) => c + 1);
+    } else {
+      setHasVoted(true);
     }
 
     setLoading(false);
@@ -81,19 +77,34 @@ export default function PipelineRow({ item }: RowProps) {
 
   return (
     <>
-      {/* MODEL TITLE */}
-      <td className="py-4 px-4 font-medium text-[#1B3C53]">
+      {/* MODEL */}
+      <td className="text-sm py-3 px-4 font-medium text-[#1B3C53] whitespace-nowrap">
         {item.name}
+
+        {item.status === "wip" && (
+          <span
+            className="
+              ml-2
+              inline-flex items-center
+              text-xs font-semibold
+              px-2 py-1 rounded-full
+              bg-[#456882]/10
+              text-[#456882]
+            "
+          >
+            WIP
+          </span>
+        )}
       </td>
 
       {/* DESCRIPTION */}
-      <td className="py-4 px-4 text-sm text-[#456882] leading-snug max-w-lg">
+      <td className="py-3 px-4 text-sm text-[#456882] leading-relaxed max-w-lg">
         {item.description}
       </td>
 
-      {/* VOTES */}
-      <td className="py-4 px-1.5">
-        <div className="flex items-center justify-end gap-3">
+      {/* VOTES / ACTION */}
+      <td className="py-3 px-4 text-right whitespace-nowrap">
+        <div className="inline-flex items-center gap-3">
           <span
             className="
               text-xs font-semibold
@@ -107,11 +118,13 @@ export default function PipelineRow({ item }: RowProps) {
 
           <button
             onClick={vote}
-            disabled={hasVoted || loading}
+            disabled={hasVoted || loading || votingDisabled}
             className={`
               p-1.5 rounded-md transition
               ${
-                hasVoted
+                votingDisabled
+                  ? "text-[#456882]/40 cursor-not-allowed"
+                  : hasVoted
                   ? "text-[#456882]/40 cursor-not-allowed"
                   : "text-[#456882] hover:text-[#1B3C53] hover:bg-[#1B3C53]/5"
               }

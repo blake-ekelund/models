@@ -45,17 +45,24 @@ export default function ModelCard({
   const Icon = Icons[category];
   const isAvailable = status === "Available";
 
+  const showNew = isAvailable && isNew;
+  const showComingSoon = !isAvailable;
+
   return (
     <div
-      className="
+      className={`
+        relative
         bg-white
         border border-[#456882]/30
         rounded-xl
         p-6
         flex flex-col h-full
-        shadow-sm hover:shadow-md
-        transition
-      "
+        shadow-sm
+        transition-all duration-200
+        hover:shadow-lg
+        hover:-translate-y-0.5
+        hover:border-[#234C6A]/60
+      `}
     >
       {/* HEADER */}
       <div className="flex justify-between items-start mb-3">
@@ -63,31 +70,17 @@ export default function ModelCard({
           {name}
         </h3>
 
-        <div className="flex flex-col items-end gap-1">
-          {isNew && (
-            <span
-              className="
-                text-[10px] font-semibold
-                px-2 py-0.5 rounded-full
-                bg-[#1B3C53]/10 text-[#1B3C53]
-              "
-            >
-              New
-            </span>
-          )}
+        {showNew && (
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#1B3C53]/10 text-[#1B3C53]">
+            New
+          </span>
+        )}
 
-          {status === "Coming Soon" && (
-            <span
-              className="
-                text-[10px] font-semibold
-                px-2 py-0.5 rounded-full
-                bg-[#456882]/10 text-[#456882]
-              "
-            >
-              Coming Soon
-            </span>
-          )}
-        </div>
+        {showComingSoon && (
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#456882]/10 text-[#456882]">
+            Coming Soon
+          </span>
+        )}
       </div>
 
       {/* DESCRIPTION */}
@@ -97,14 +90,7 @@ export default function ModelCard({
 
       {/* CATEGORY */}
       <div className="mb-4">
-        <span
-          className="
-            inline-flex items-center gap-1
-            text-xs font-semibold
-            px-2 py-1 rounded-full
-            bg-[#456882]/10 text-[#456882]
-          "
-        >
+        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-[#456882]/10 text-[#456882]">
           <Icon size={12} /> {category}
         </span>
       </div>
@@ -116,17 +102,17 @@ export default function ModelCard({
         className={`
           mt-auto w-full
           flex items-center justify-center
-          gap-2 py-2 rounded-lg
+          py-2 rounded-lg
           text-sm font-semibold
           transition
           ${
             isAvailable
               ? "bg-[#234C6A] text-white hover:bg-[#456882]"
-              : "bg-[#456882]/10 text-[#456882]/50 cursor-not-allowed"
+              : "bg-[#E3E3E3] text-[#456882] cursor-not-allowed"
           }
         `}
       >
-        Start Modeling →
+        Start Modeling
       </button>
     </div>
   );
